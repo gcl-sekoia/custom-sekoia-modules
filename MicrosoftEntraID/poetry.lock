@@ -1878,6 +1878,29 @@ msal = ">=1.29,<2"
 portalocker = ["portalocker (>=1.4,<4)"]
 
 [[package]]
+name = "msgraph-beta-sdk"
+version = "1.57.0"
+description = "The Microsoft Graph Beta Python SDK"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "msgraph_beta_sdk-1.57.0-py3-none-any.whl", hash = "sha256:cd29c419fa41a120d650a9558848019a361805c4f45dac9af15a0eb0054181c7"},
+    {file = "msgraph_beta_sdk-1.57.0.tar.gz", hash = "sha256:007f26596425207add3683a722859413b3c34e9434950f6efb92bdaab705a81e"},
+]
+
+[package.dependencies]
+azure-identity = ">=1.12.0"
+microsoft-kiota-serialization-form = ">=1.9.0"
+microsoft-kiota-serialization-json = ">=1.9.0,<2.0.0"
+microsoft-kiota-serialization-multipart = ">=1.9.0"
+microsoft-kiota-serialization-text = ">=1.9.0,<2.0.0"
+msgraph_core = ">=1.3.1"
+
+[package.extras]
+dev = ["bumpver", "isort", "mypy", "pylint", "pytest", "yapf"]
+
+[[package]]
 name = "msgraph-core"
 version = "1.3.8"
 description = "Core component of the Microsoft Graph Python SDK"
@@ -3801,4 +3824,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.12"
-content-hash = "5196f9904decf8c198eebce247a3fc2e6f9103779f6dd18776124a36f1ca7104"
+content-hash = "b4c3c8285d0e4d1fbf8372eabfb788b32ac3f4b54f52ef53ae89137a000e3302"

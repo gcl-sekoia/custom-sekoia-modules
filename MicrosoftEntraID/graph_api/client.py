@@ -9,9 +9,10 @@ from msgraph import GraphServiceClient
 from msgraph.generated.audit_logs.directory_audits.directory_audits_request_builder import (
     DirectoryAuditsRequestBuilder,
 )
-from msgraph.generated.audit_logs.sign_ins.sign_ins_request_builder import SignInsRequestBuilder
 from msgraph.generated.models.directory_audit import DirectoryAudit
-from msgraph.generated.models.sign_in import SignIn
+from msgraph_beta import GraphServiceClient as BetaGraphServiceClient
+from msgraph_beta.generated.audit_logs.sign_ins.sign_ins_request_builder import SignInsRequestBuilder
+from msgraph_beta.generated.models.sign_in import SignIn
 
 _factory = JsonSerializationWriterFactory()
 
@@ -22,27 +23,40 @@ class GraphApi(object):
         self._client_secret = client_secret
         self._tenant_id = tenant_id
         self._client: GraphServiceClient | None = None
+        self._beta_client: BetaGraphServiceClient | None = None
         self._credentials: ClientSecretCredential | None = None
 
-    @property
-    def client(self) -> GraphServiceClient:  # pragma: no cover
+    def _ensure_credentials(self) -> ClientSecretCredential:  # pragma: no cover
         if self._credentials is None:
             self._credentials = ClientSecretCredential(
                 tenant_id=self._tenant_id,
                 client_id=self._client_id,
                 client_secret=self._client_secret,
             )
-
-            # Reset client to force re-creation with new credentials even if already set
+            # Reset clients to force re-creation with new credentials
             self._client = None
+            self._beta_client = None
+        return self._credentials
 
+    @property
+    def client(self) -> GraphServiceClient:  # pragma: no cover
+        credentials = self._ensure_credentials()
         if self._client is None:
             self._client = GraphServiceClient(
-                credentials=self._credentials,
+                credentials=credentials,
                 scopes=["https://graph.microsoft.com/.default"],
             )
-
         return self._client
+
+    @property
+    def beta_client(self) -> BetaGraphServiceClient:  # pragma: no cover
+        credentials = self._ensure_credentials()
+        if self._beta_client is None:
+            self._beta_client = BetaGraphServiceClient(
+                credentials=credentials,
+                scopes=["https://graph.microsoft.com/.default"],
+            )
+        return self._beta_client
 
     @staticmethod
     def _format_date(dt: datetime) -> str:
@@ -72,7 +86,7 @@ class GraphApi(object):
             ),
         )
 
-        response = await self.client.audit_logs.sign_ins.get(request_configuration=request_configuration)
+        response = await self.beta_client.audit_logs.sign_ins.get(request_configuration=request_configuration)
         if response is None:
             return
 
@@ -83,7 +97,7 @@ class GraphApi(object):
 
         # Follow @odata.nextLink
         while next_data_link is not None:
-            next_link_response = await self.client.audit_logs.sign_ins.with_url(next_data_link).get()
+            next_link_response = await self.beta_client.audit_logs.sign_ins.with_url(next_data_link).get()
             if next_link_response is None:
                 return
 
@@ -132,6 +146,9 @@ class GraphApi(object):
     async def close(self) -> None:  # pragma: no cover
         if self._client:
             self._client = None
+
+        if self._beta_client:
+            self._beta_client = None
 
         if self._credentials:
             await self._credentials.close()

@@ -31,8 +31,8 @@ def entraid_connector(
 async def test_entraid_connector_single_run_1(
     entraid_connector, signins_page_1, signins_page_2, directory_audits_page_1, directory_audits_page_2
 ):
-    entraid_connector._client._client.audit_logs.sign_ins.get.return_value = signins_page_1
-    entraid_connector._client._client.audit_logs.sign_ins.with_url.return_value.get.return_value = signins_page_2
+    entraid_connector._client._beta_client.audit_logs.sign_ins.get.return_value = signins_page_1
+    entraid_connector._client._beta_client.audit_logs.sign_ins.with_url.return_value.get.return_value = signins_page_2
     entraid_connector._client._client.audit_logs.directory_audits.get.return_value = directory_audits_page_1
     entraid_connector._client._client.audit_logs.directory_audits.with_url.return_value.get.return_value = (
         directory_audits_page_2
@@ -48,8 +48,8 @@ async def test_entraid_connector_single_run_2(
 ):
     entraid_connector.configuration.chunk_size = 3
 
-    entraid_connector._client._client.audit_logs.sign_ins.get.return_value = signins_page_1
-    entraid_connector._client._client.audit_logs.sign_ins.with_url.return_value.get.return_value = signins_page_2
+    entraid_connector._client._beta_client.audit_logs.sign_ins.get.return_value = signins_page_1
+    entraid_connector._client._beta_client.audit_logs.sign_ins.with_url.return_value.get.return_value = signins_page_2
     entraid_connector._client._client.audit_logs.directory_audits.get.return_value = directory_audits_page_1
     entraid_connector._client._client.audit_logs.directory_audits.with_url.return_value.get.return_value = (
         directory_audits_page_2

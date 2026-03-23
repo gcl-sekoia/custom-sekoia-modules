@@ -12,9 +12,9 @@ import pytest
 from faker import Faker
 from msgraph.generated.models.audit_activity_initiator import AuditActivityInitiator
 from msgraph.generated.models.directory_audit import DirectoryAudit
-from msgraph.generated.models.sign_in import SignIn
-from msgraph.generated.models.sign_in_status import SignInStatus
 from msgraph.generated.models.user_identity import UserIdentity
+from msgraph_beta.generated.models.sign_in import SignIn
+from msgraph_beta.generated.models.sign_in_status import SignInStatus
 from sekoia_automation import constants
 
 from graph_api.client import GraphApi
@@ -137,8 +137,19 @@ def graph_api_client(session_faker: Faker) -> GraphApi:
     dir_audits.with_url.return_value.get = AsyncMock()
     client_mock.audit_logs.directory_audits = dir_audits
 
+    # Beta client mock for sign-in queries
+    beta_client_mock = MagicMock(name="BetaGraphServiceClient")
+    beta_client_mock.audit_logs = MagicMock(name="BetaAuditLogs")
+
+    beta_sign_ins = MagicMock(name="BetaSignInsRequestBuilder")
+    beta_sign_ins.get = AsyncMock()
+    beta_sign_ins.with_url = MagicMock()
+    beta_sign_ins.with_url.return_value.get = AsyncMock()
+    beta_client_mock.audit_logs.sign_ins = beta_sign_ins
+
     client._credentials = MagicMock()
     client._client = client_mock
+    client._beta_client = beta_client_mock
 
     return client
 

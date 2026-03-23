@@ -6,7 +6,7 @@ from typing import Any, Optional
 from cachetools import Cache, LRUCache
 from loguru import logger
 from msgraph.generated.models.directory_audit import DirectoryAudit
-from msgraph.generated.models.sign_in import SignIn
+from msgraph_beta.generated.models.sign_in import SignIn
 from sekoia_automation.aio.connector import AsyncConnector
 from sekoia_automation.checkpoint import CheckpointDatetime
 from sekoia_automation.connector import Connector, DefaultConnectorConfiguration
