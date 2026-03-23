@@ -31,10 +31,5 @@
   "description": "Trigger playbook to get Azure EntraId events using Graph API",
   "docker_parameters": "entraid_graph_api_connector",
   "name": "Fetch new events from Microsoft EntraId Graph API",
-  "results": {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {},
-    "title": "The records"
-  },
   "uuid": "89dccb22-9d01-40f2-9d82-ceb8ad90fae1"
 }
