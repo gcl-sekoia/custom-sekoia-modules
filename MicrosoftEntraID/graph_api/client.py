@@ -101,6 +101,7 @@ class GraphApi(object):
                 orderby=["createdDateTime asc"],
             ),
         )
+        request_configuration.headers.add("Prefer", "include-unknown-enum-members")
 
         response = await self.beta_client.audit_logs.sign_ins.get(request_configuration=request_configuration)
         if response is None:
@@ -113,7 +114,11 @@ class GraphApi(object):
 
         # Follow @odata.nextLink
         while next_data_link is not None:
-            next_link_response = await self.beta_client.audit_logs.sign_ins.with_url(next_data_link).get()
+            pagination_config = RequestConfiguration()
+            pagination_config.headers.add("Prefer", "include-unknown-enum-members")
+            next_link_response = await self.beta_client.audit_logs.sign_ins.with_url(next_data_link).get(
+                request_configuration=pagination_config
+            )
             if next_link_response is None:
                 return
 

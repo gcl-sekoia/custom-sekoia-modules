@@ -199,3 +199,21 @@ async def test_signins_multiple_event_types_return_combined_results(graph_api_cl
     ]
 
     assert [i.id for i in items] == ["interactive-1", "sp-1", "mi-1"]
+
+
+@pytest.mark.asyncio
+async def test_signins_include_prefer_header(graph_api_client: GraphApi) -> None:
+    """Sign-in requests must include the Prefer: include-unknown-enum-members header."""
+    graph_api_client._beta_client.audit_logs.sign_ins.get.return_value = None
+
+    _ = [
+        x
+        async for x in graph_api_client.get_signin_logs(
+            datetime.fromisoformat("2025-09-01T00:00:00").replace(tzinfo=timezone.utc)
+        )
+    ]
+
+    for c in graph_api_client._beta_client.audit_logs.sign_ins.get.call_args_list:
+        rc = c.kwargs["request_configuration"]
+        prefer_values = rc.headers.try_get("Prefer")
+        assert "include-unknown-enum-members" in prefer_values
