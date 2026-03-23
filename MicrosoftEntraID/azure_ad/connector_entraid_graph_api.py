@@ -11,7 +11,7 @@ from sekoia_automation.aio.connector import AsyncConnector
 from sekoia_automation.checkpoint import CheckpointDatetime
 from sekoia_automation.connector import Connector, DefaultConnectorConfiguration
 
-from graph_api.client import GraphApi
+from graph_api.client import SIGNIN_EVENT_TYPES, GraphApi
 
 from .base import AzureADModule
 from .metrics import EVENTS_LAG, FORWARD_EVENTS_DURATION, OUTCOMING_EVENTS
@@ -30,12 +30,20 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
 
     def __init__(self, *args: Any, **kwargs: Optional[Any]) -> None:
         super().__init__(*args, **kwargs)
-        self.last_event_date_signin = CheckpointDatetime(
-            path=self.data_path,
-            start_at=timedelta(days=7),
-            ignore_older_than=timedelta(days=7),
-            subkey="signin_datetime",
-        )
+
+        # Per sign-in type checkpoints and caches
+        self.signin_checkpoints: dict[str, CheckpointDatetime] = {}
+        self.signin_caches: dict[str, Cache[str | None, bool]] = {}
+        for signin_type in SIGNIN_EVENT_TYPES:
+            self.signin_checkpoints[signin_type] = CheckpointDatetime(
+                path=self.data_path,
+                start_at=timedelta(days=7),
+                ignore_older_than=timedelta(days=7),
+                subkey=f"signin_{signin_type}_datetime",
+            )
+            self.signin_caches[signin_type] = self._load_cache(
+                self.signin_checkpoints[signin_type], f"signin_{signin_type}", maxsize=500
+            )
 
         self.last_event_date_directory = CheckpointDatetime(
             path=self.data_path,
@@ -43,30 +51,22 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
             ignore_older_than=timedelta(days=7),
             subkey="directory_datetime",
         )
-
-        self.signin_cache = self.load_cache("signin", maxsize=500)
-        self.directory_alerts_cache = self.load_cache("directory", maxsize=500)
+        self.directory_alerts_cache = self._load_cache(
+            self.last_event_date_directory, "directory", maxsize=500
+        )
         self._client: Optional[GraphApi] = None
 
-    def load_cache(self, key: str, maxsize: int) -> Cache[str | None, bool]:
-        context = self.last_event_date_signin._context if key == "signin" else self.last_event_date_directory._context
-
-        # Optional only because stubs in graph api are bad
+    @staticmethod
+    def _load_cache(checkpoint: CheckpointDatetime, key: str, maxsize: int) -> Cache[str | None, bool]:
         result: LRUCache[str | None, bool] = LRUCache(maxsize=maxsize)
-
-        with context as cache:
-            events_ids = cache.get(key, [])
-
-        for event_id in events_ids:
-            result[event_id] = True
-
+        with checkpoint._context as cache:
+            for event_id in cache.get(key, []):
+                result[event_id] = True
         return result
 
-    def persist_cache(self, key: str) -> None:
-        context = self.last_event_date_signin._context if key == "signin" else self.last_event_date_directory._context
-        cache = self.signin_cache if key == "signin" else self.directory_alerts_cache
-
-        with context as ctx:
+    @staticmethod
+    def _persist_cache(checkpoint: CheckpointDatetime, key: str, cache: Cache[str | None, bool]) -> None:
+        with checkpoint._context as ctx:
             ctx[key] = list(cache.keys())
 
     @property
@@ -91,12 +91,14 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
     async def run_directory(self) -> int:
         events: list[DirectoryAudit] = []
         total_events = 0
-        new_offset = self.last_event_date_directory.offset
-        async for event in self.client.get_directory_audit_logs(start_date=self.last_event_date_directory.offset):
+        checkpoint = self.last_event_date_directory
+        cache = self.directory_alerts_cache
+        new_offset = checkpoint.offset
+        async for event in self.client.get_directory_audit_logs(start_date=checkpoint.offset):
             if not self.running:  # pragma: no cover
                 break
 
-            if event.id in self.directory_alerts_cache:
+            if event.id in cache:
                 continue
 
             events.append(event)
@@ -105,10 +107,10 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
 
                 for data in events:
                     new_offset = max(new_offset, data.activity_date_time)
-                    self.directory_alerts_cache[data.id] = True
+                    cache[data.id] = True
 
-                self.last_event_date_directory.offset = new_offset
-                self.persist_cache("directory")
+                checkpoint.offset = new_offset
+                self._persist_cache(checkpoint, "directory", cache)
                 events = []
 
         if events:
@@ -116,45 +118,57 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
 
             for data in events:
                 new_offset = max(new_offset, data.activity_date_time)
-                self.directory_alerts_cache[data.id] = True
+                cache[data.id] = True
 
-            self.last_event_date_directory.offset = new_offset
-            self.persist_cache("directory")
+            checkpoint.offset = new_offset
+            self._persist_cache(checkpoint, "directory", cache)
 
         return total_events
 
     async def run_signin(self) -> int:
+        total = 0
+        for signin_type, event_type_filter in SIGNIN_EVENT_TYPES.items():
+            total += await self._run_signin_type(signin_type, event_type_filter)
+        return total
+
+    async def _run_signin_type(self, signin_type: str, event_type_filter: str) -> int:
+        checkpoint = self.signin_checkpoints[signin_type]
+        cache = self.signin_caches[signin_type]
+        cache_key = f"signin_{signin_type}"
         events: list[SignIn] = []
         total_events = 0
-        new_offset = self.last_event_date_directory.offset
-        async for event in self.client.get_signin_logs(start_date=self.last_event_date_directory.offset):
+        new_offset = checkpoint.offset
+
+        async for event in self.client.get_signin_logs_for_type(
+            checkpoint.offset, None, event_type_filter
+        ):
             if not self.running:  # pragma: no cover
                 break
 
-            if event.id in self.signin_cache:
+            if event.id in cache:
                 continue
 
             events.append(event)
             if len(events) >= self.configuration.chunk_size:
-                total_events += len(await self.push_data_to_intakes([GraphApi.encode_log(event) for event in events]))
+                total_events += len(await self.push_data_to_intakes([GraphApi.encode_log(e) for e in events]))
 
                 for data in events:
                     new_offset = max(new_offset, data.created_date_time)
-                    self.signin_cache[data.id] = True
+                    cache[data.id] = True
 
-                self.last_event_date_directory.offset = new_offset
-                self.persist_cache("signin")
+                checkpoint.offset = new_offset
+                self._persist_cache(checkpoint, cache_key, cache)
                 events = []
 
         if events:
-            total_events += len(await self.push_data_to_intakes([GraphApi.encode_log(event) for event in events]))
+            total_events += len(await self.push_data_to_intakes([GraphApi.encode_log(e) for e in events]))
 
             for data in events:
                 new_offset = max(new_offset, data.created_date_time)
-                self.signin_cache[data.id] = True
+                cache[data.id] = True
 
-            self.last_event_date_directory.offset = new_offset
-            self.persist_cache("signin")
+            checkpoint.offset = new_offset
+            self._persist_cache(checkpoint, cache_key, cache)
 
         return total_events
 
@@ -169,7 +183,7 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
             try:
                 processing_start = time.time()
                 result = await self.single_run()
-                last_event_date_signin = self.last_event_date_signin.offset
+                last_event_date_signin = min(cp.offset for cp in self.signin_checkpoints.values())
                 last_event_date_directory = self.last_event_date_directory.offset
                 last_event_date = max(last_event_date_signin, last_event_date_directory)
                 processing_end = time.time()

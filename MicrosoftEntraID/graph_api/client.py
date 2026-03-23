@@ -16,6 +16,15 @@ from msgraph_beta.generated.models.sign_in import SignIn
 
 _factory = JsonSerializationWriterFactory()
 
+# Sign-in event types to collect from the beta API.
+# User types (interactive + non-interactive) can be combined in one query,
+# but service principal and managed identity require separate queries.
+SIGNIN_EVENT_TYPES: dict[str, str] = {
+    "interactive": "signInEventTypes/any(t: t eq 'interactiveUser' or t eq 'nonInteractiveUser')",
+    "service_principal": "signInEventTypes/any(t: t eq 'servicePrincipal')",
+    "managed_identity": "signInEventTypes/any(t: t eq 'managedIdentity')",
+}
+
 
 class GraphApi(object):
     def __init__(self, client_id: str, client_secret: str, tenant_id: str) -> None:
@@ -79,9 +88,16 @@ class GraphApi(object):
     async def get_signin_logs(
         self, start_date: datetime, end_date: datetime | None = None
     ) -> AsyncGenerator[SignIn, None]:
+        for event_type_filter in SIGNIN_EVENT_TYPES.values():
+            async for item in self.get_signin_logs_for_type(start_date, end_date, event_type_filter):
+                yield item
+
+    async def get_signin_logs_for_type(
+        self, start_date: datetime, end_date: datetime | None, event_type_filter: str
+    ) -> AsyncGenerator[SignIn, None]:
         request_configuration = RequestConfiguration(
             query_parameters=SignInsRequestBuilder.SignInsRequestBuilderGetQueryParameters(
-                filter=self._build_filter("createdDateTime", start_date, end_date),
+                filter=self._build_filter("createdDateTime", start_date, end_date, extra=[event_type_filter]),
                 orderby=["createdDateTime asc"],
             ),
         )
