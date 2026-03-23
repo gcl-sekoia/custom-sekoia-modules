@@ -1,7 +1,7 @@
 {
   "name": "Disable User",
   "description": "Disable an Azure Active Directory user. Requires the User.ReadWrite.All permission.",
-  "uuid": "df34b4c8-f570-5c70-a986-e1c649aedf42",
+  "uuid": "8577fff7-a855-4603-8f0c-c11067409b95",
   "docker_parameters": "DisableUserAction",
   "arguments": {
     "title": "RequiredSingleUserArguments",

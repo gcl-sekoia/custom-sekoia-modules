@@ -1,7 +1,7 @@
   {
   "name": "Microsoft Entra ID Users",
   "description": "Fetch Entra ID user asset",
-  "uuid": "b6e2e2e2-4c3a-4b7a-9e2a-1f2c3d4e5f6a",
+  "uuid": "7d59c02e-a331-4cc3-a7ab-5c71d0289a3c",
   "docker_parameters": "entra_id_asset_connector",
   "type": "asset",
   "capability": "user",

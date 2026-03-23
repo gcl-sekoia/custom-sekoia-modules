@@ -1,7 +1,7 @@
 {
   "name": "Revoke Sign in",
   "description": "Invalidates all the refresh tokens issued to applications for a user. Requires the User.ReadWrite.All or Directory.ReadWrite.All permissions.",
-  "uuid": "4be1e1e1-cb41-4b93-ac3d-cdc6a5c38c71",
+  "uuid": "080a8126-d607-4968-88a9-550c8336a829",
   "docker_parameters": "RevokeSignInsSessionsAction",
   "arguments": {
     "title": "SingleUserArguments",

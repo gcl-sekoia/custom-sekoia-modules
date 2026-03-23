@@ -1,7 +1,7 @@
 {
   "name": "Get SignIns",
   "description": "Get the last sign ins of an Azure AD user. Requires the AuditLog.Read.All and Directory.Read.All permissions.",
-  "uuid": "02d6dbc8-6622-5718-9925-ae032dfa5208",
+  "uuid": "f416a50d-d90e-48ec-905e-2183a9d30b23",
   "docker_parameters": "GetSignInsAction",
   "arguments": {
     "title": "IdArguments",
