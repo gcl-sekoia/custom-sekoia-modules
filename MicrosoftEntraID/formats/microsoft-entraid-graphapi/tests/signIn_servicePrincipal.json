@@ -1,0 +1,106 @@
+{
+  "input": {
+    "sekoiaio": {
+      "intake": {
+        "dialect": "GraphAPI for Microsoft Entra ID / Azure AD (GCL)",
+        "dialect_uuid": "370f279b-439d-478b-a7b7-ac666fd06c65"
+      }
+    },
+    "message": "{\"id\": \"11e123d3-c45e-4f57-afc1-3a50c5435700\", \"agent\": {\"agentSubjectParentId\": \"\", \"agentSubjectType\": \"notAgentic\", \"agentType\": \"notAgentic\", \"parentAppId\": \"\"}, \"appDisplayName\": \"Entra ID logs collection (Graph API)\", \"appId\": \"f25d0ebf-df3a-4ed7-b217-4169efe4a822\", \"appOwnerTenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\", \"appliedConditionalAccessPolicies\": [], \"appliedEventListeners\": [], \"authenticationAppPolicyEvaluationDetails\": [], \"authenticationContextClassReferences\": [], \"authenticationDetails\": [], \"authenticationMethodsUsed\": [], \"authenticationProcessingDetails\": [{\"key\": \"Is CAE Token\", \"value\": \"True\"}], \"authenticationRequirement\": \"\", \"authenticationRequirementPolicies\": [], \"autonomousSystemNumber\": 0, \"clientAppUsed\": \"\", \"clientCredentialType\": \"clientSecret\", \"conditionalAccessAudiences\": [\"00000002-0000-0000-c000-000000000000\", \"1b912ec3-a9dd-4c4d-a53e-76aa7adb28d7\"], \"conditionalAccessStatus\": \"notApplied\", \"correlationId\": \"73aa41a1-b226-4a7c-ba54-0101d18aa10f\", \"createdDateTime\": \"2026-03-23T19:56:35+00:00\", \"deviceDetail\": {\"browser\": \"\", \"deviceId\": \"\", \"displayName\": \"\", \"operatingSystem\": \"\"}, \"federatedCredentialId\": \"\", \"flaggedForReview\": false, \"globalSecureAccessIpAddress\": \"\", \"homeTenantName\": \"\", \"ipAddress\": \"57.128.99.102\", \"isInteractive\": false, \"isTenantRestricted\": false, \"isThroughGlobalSecureAccess\": false, \"location\": {\"city\": \"Roubaix\", \"countryOrRegion\": \"FR\", \"geoCoordinates\": {\"latitude\": 50.6925, \"longitude\": 3.18}, \"state\": \"Nord\"}, \"managedServiceIdentity\": {\"associatedResourceId\": \"\", \"federatedTokenId\": \"\", \"federatedTokenIssuer\": \"\", \"msiType\": \"none\"}, \"networkLocationDetails\": [], \"originalRequestId\": \"11e123d3-c45e-4f57-afc1-3a50c5435700\", \"originalTransferMethod\": \"none\", \"privateLinkDetails\": {\"policyId\": \"\", \"policyName\": \"\", \"resourceId\": \"\"}, \"processingTimeInMilliseconds\": -1, \"resourceDisplayName\": \"Microsoft Graph\", \"resourceId\": \"00000003-0000-0000-c000-000000000000\", \"resourceOwnerTenantId\": \"f8cdef31-a31e-4b4a-93e4-5f571e91255a\", \"resourceServicePrincipalId\": \"171179c6-95c5-4e62-8bfa-b59106464112\", \"riskDetail\": \"hidden\", \"riskEventTypes_v2\": [], \"riskLevelAggregated\": \"hidden\", \"riskLevelDuringSignIn\": \"hidden\", \"riskState\": \"none\", \"servicePrincipalCredentialKeyId\": \"0cf8fe0b-e955-48fa-9319-ed9e838915db\", \"servicePrincipalCredentialThumbprint\": \"\", \"servicePrincipalId\": \"ce37673d-2a41-4c79-8467-dc70c86eab78\", \"servicePrincipalName\": \"Entra ID logs collection (Graph API)\", \"sessionId\": \"0031511a-16f3-94c3-4a45-a1bacc9df2c0\", \"sessionLifetimePolicies\": [], \"signInEventTypes\": [\"servicePrincipal\"], \"signInIdentifier\": \"\", \"signInTokenProtectionStatus\": \"none\", \"status\": {\"errorCode\": 0, \"failureReason\": \"Other.\"}, \"tokenIssuerName\": \"\", \"tokenIssuerType\": \"UnknownFutureValue\", \"tokenProtectionStatusDetails\": {\"signInSessionStatus\": \"none\"}, \"uniqueTokenIdentifier\": \"0yPhEV7EV0-vwTpQxUNXAA\", \"userAgent\": \"\", \"userDisplayName\": \"\", \"userId\": \"\", \"userPrincipalName\": \"\", \"_meta\": {\"tenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\"}}"
+  },
+  "expected": {
+    "message": "{\"id\": \"11e123d3-c45e-4f57-afc1-3a50c5435700\", \"agent\": {\"agentSubjectParentId\": \"\", \"agentSubjectType\": \"notAgentic\", \"agentType\": \"notAgentic\", \"parentAppId\": \"\"}, \"appDisplayName\": \"Entra ID logs collection (Graph API)\", \"appId\": \"f25d0ebf-df3a-4ed7-b217-4169efe4a822\", \"appOwnerTenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\", \"appliedConditionalAccessPolicies\": [], \"appliedEventListeners\": [], \"authenticationAppPolicyEvaluationDetails\": [], \"authenticationContextClassReferences\": [], \"authenticationDetails\": [], \"authenticationMethodsUsed\": [], \"authenticationProcessingDetails\": [{\"key\": \"Is CAE Token\", \"value\": \"True\"}], \"authenticationRequirement\": \"\", \"authenticationRequirementPolicies\": [], \"autonomousSystemNumber\": 0, \"clientAppUsed\": \"\", \"clientCredentialType\": \"clientSecret\", \"conditionalAccessAudiences\": [\"00000002-0000-0000-c000-000000000000\", \"1b912ec3-a9dd-4c4d-a53e-76aa7adb28d7\"], \"conditionalAccessStatus\": \"notApplied\", \"correlationId\": \"73aa41a1-b226-4a7c-ba54-0101d18aa10f\", \"createdDateTime\": \"2026-03-23T19:56:35+00:00\", \"deviceDetail\": {\"browser\": \"\", \"deviceId\": \"\", \"displayName\": \"\", \"operatingSystem\": \"\"}, \"federatedCredentialId\": \"\", \"flaggedForReview\": false, \"globalSecureAccessIpAddress\": \"\", \"homeTenantName\": \"\", \"ipAddress\": \"57.128.99.102\", \"isInteractive\": false, \"isTenantRestricted\": false, \"isThroughGlobalSecureAccess\": false, \"location\": {\"city\": \"Roubaix\", \"countryOrRegion\": \"FR\", \"geoCoordinates\": {\"latitude\": 50.6925, \"longitude\": 3.18}, \"state\": \"Nord\"}, \"managedServiceIdentity\": {\"associatedResourceId\": \"\", \"federatedTokenId\": \"\", \"federatedTokenIssuer\": \"\", \"msiType\": \"none\"}, \"networkLocationDetails\": [], \"originalRequestId\": \"11e123d3-c45e-4f57-afc1-3a50c5435700\", \"originalTransferMethod\": \"none\", \"privateLinkDetails\": {\"policyId\": \"\", \"policyName\": \"\", \"resourceId\": \"\"}, \"processingTimeInMilliseconds\": -1, \"resourceDisplayName\": \"Microsoft Graph\", \"resourceId\": \"00000003-0000-0000-c000-000000000000\", \"resourceOwnerTenantId\": \"f8cdef31-a31e-4b4a-93e4-5f571e91255a\", \"resourceServicePrincipalId\": \"171179c6-95c5-4e62-8bfa-b59106464112\", \"riskDetail\": \"hidden\", \"riskEventTypes_v2\": [], \"riskLevelAggregated\": \"hidden\", \"riskLevelDuringSignIn\": \"hidden\", \"riskState\": \"none\", \"servicePrincipalCredentialKeyId\": \"0cf8fe0b-e955-48fa-9319-ed9e838915db\", \"servicePrincipalCredentialThumbprint\": \"\", \"servicePrincipalId\": \"ce37673d-2a41-4c79-8467-dc70c86eab78\", \"servicePrincipalName\": \"Entra ID logs collection (Graph API)\", \"sessionId\": \"0031511a-16f3-94c3-4a45-a1bacc9df2c0\", \"sessionLifetimePolicies\": [], \"signInEventTypes\": [\"servicePrincipal\"], \"signInIdentifier\": \"\", \"signInTokenProtectionStatus\": \"none\", \"status\": {\"errorCode\": 0, \"failureReason\": \"Other.\"}, \"tokenIssuerName\": \"\", \"tokenIssuerType\": \"UnknownFutureValue\", \"tokenProtectionStatusDetails\": {\"signInSessionStatus\": \"none\"}, \"uniqueTokenIdentifier\": \"0yPhEV7EV0-vwTpQxUNXAA\", \"userAgent\": \"\", \"userDisplayName\": \"\", \"userId\": \"\", \"userPrincipalName\": \"\", \"_meta\": {\"tenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\"}}",
+    "event": {
+      "action": "Sign-in activity",
+      "category": [
+        "authentication"
+      ],
+      "outcome": "success",
+      "reason": "Other.",
+      "type": [
+        "start"
+      ]
+    },
+    "@timestamp": "2026-03-23T19:56:35Z",
+    "action": {
+      "outcome": "success"
+    },
+    "azuread": {
+      "authenticationDetails": [],
+      "authenticationRequirementPolicies": [],
+      "autonomousSystemNumber": 0,
+      "callerIpAddress": "57.128.99.102",
+      "category": "ServicePrincipalSignInLogs",
+      "correlationId": "73aa41a1-b226-4a7c-ba54-0101d18aa10f",
+      "flaggedForReview": "false",
+      "identity": "Entra ID logs collection (Graph API)",
+      "isTenantRestricted": "false",
+      "operationName": "Sign-in activity",
+      "privateLinkDetails": {
+        "policyId": "",
+        "policyName": "",
+        "resourceId": ""
+      },
+      "properties": {
+        "appDisplayName": "Entra ID logs collection (Graph API)",
+        "appId": "f25d0ebf-df3a-4ed7-b217-4169efe4a822",
+        "conditionalAccessStatus": "notApplied",
+        "correlationId": "73aa41a1-b226-4a7c-ba54-0101d18aa10f",
+        "id": "11e123d3-c45e-4f57-afc1-3a50c5435700",
+        "original_transfer_method": "none",
+        "resourceId": "00000003-0000-0000-c000-000000000000",
+        "resourceOwnerTenantId": "f8cdef31-a31e-4b4a-93e4-5f571e91255a",
+        "riskDetail": "hidden",
+        "riskEventTypes_v2": [],
+        "riskLevelAggregated": "hidden",
+        "riskLevelDuringSignIn": "hidden",
+        "riskState": "none",
+        "servicePrincipalId": "ce37673d-2a41-4c79-8467-dc70c86eab78",
+        "session_id": "0031511a-16f3-94c3-4a45-a1bacc9df2c0",
+        "status": {
+          "errorCode": "0",
+          "failureReason": "Other."
+        },
+        "tokenIssuerType": "UnknownFutureValue",
+        "uniqueTokenIdentifier": "0yPhEV7EV0-vwTpQxUNXAA"
+      },
+      "servicePrincipalId": "ce37673d-2a41-4c79-8467-dc70c86eab78",
+      "tenantId": "eb18de9c-aff1-4d64-95b2-457b4946e3aa"
+    },
+    "cloud": {
+      "provider": "Azure",
+      "service": {
+        "name": "Azure EntraId"
+      }
+    },
+    "error": {
+      "code": "0",
+      "message": "Other."
+    },
+    "related": {
+      "ip": [
+        "57.128.99.102"
+      ]
+    },
+    "service": {
+      "id": "f25d0ebf-df3a-4ed7-b217-4169efe4a822",
+      "name": "Microsoft Graph",
+      "type": "ldap"
+    },
+    "source": {
+      "address": "57.128.99.102",
+      "geo": {
+        "city_name": "Roubaix",
+        "location": {
+          "lat": 50.6925,
+          "lon": 3.18
+        },
+        "region_name": "Nord"
+      },
+      "ip": "57.128.99.102"
+    },
+    "trace": {
+      "id": "73aa41a1-b226-4a7c-ba54-0101d18aa10f"
+    }
+  }
+}

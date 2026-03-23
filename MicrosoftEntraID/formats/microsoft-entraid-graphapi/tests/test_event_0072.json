@@ -11,11 +11,12 @@
       "provider": "Core Directory"
     },
     "@timestamp": "2025-11-12T14:04:58.508648Z",
-    "azure": {
-      "entraid": {
-        "properties": {
-          "operationType": "Unassign"
-        }
+    "azuread": {
+      "category": "AuditLogs",
+      "correlationId": "00000000-0000-0000-0000-000000000000",
+      "operationName": "Remove member from group",
+      "properties": {
+        "operationType": "Unassign"
       }
     },
     "cloud": {

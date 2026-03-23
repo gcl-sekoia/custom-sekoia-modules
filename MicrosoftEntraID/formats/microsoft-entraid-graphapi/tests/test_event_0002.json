@@ -11,11 +11,13 @@
       "provider": "Device Registration Service"
     },
     "@timestamp": "2025-11-12T13:51:01.550249Z",
-    "azure": {
-      "entraid": {
-        "properties": {
-          "operationType": "Get"
-        }
+    "azuread": {
+      "callerIpAddress": "192.0.2.1",
+      "category": "AuditLogs",
+      "correlationId": "00000000-0000-0000-0000-000000000000",
+      "operationName": "Recover device local administrator password",
+      "properties": {
+        "operationType": "Get"
       }
     },
     "cloud": {

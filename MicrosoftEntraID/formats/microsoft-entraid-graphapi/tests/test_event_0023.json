@@ -11,30 +11,31 @@
       "provider": "Core Directory"
     },
     "@timestamp": "2025-11-12T13:59:30.081568Z",
-    "azure": {
-      "entraid": {
-        "properties": {
-          "modifiedProperties": [
-            {
-              "displayName": "testValue3",
-              "newValue": "\"LastDirSyncTime\""
-            },
-            {
-              "displayName": "testValue4",
-              "newValue": "\"DirectorySync\""
-            },
-            {
-              "displayName": "testValue5",
-              "newValue": "\"Member\""
-            },
-            {
-              "displayName": "testValue2",
-              "newValue": "[\"2025-11-12T13:59:29Z\"]",
-              "oldValue": "[\"2025-11-12T13:29:28Z\"]"
-            }
-          ],
-          "operationType": "Update"
-        }
+    "azuread": {
+      "category": "AuditLogs",
+      "correlationId": "00000000-0000-0000-0000-000000000000",
+      "operationName": "Update user",
+      "properties": {
+        "modifiedProperties": [
+          {
+            "displayName": "testValue3",
+            "newValue": "\"LastDirSyncTime\""
+          },
+          {
+            "displayName": "testValue4",
+            "newValue": "\"DirectorySync\""
+          },
+          {
+            "displayName": "testValue5",
+            "newValue": "\"Member\""
+          },
+          {
+            "displayName": "testValue2",
+            "newValue": "[\"2025-11-12T13:59:29Z\"]",
+            "oldValue": "[\"2025-11-12T13:29:28Z\"]"
+          }
+        ],
+        "operationType": "Update"
       }
     },
     "cloud": {

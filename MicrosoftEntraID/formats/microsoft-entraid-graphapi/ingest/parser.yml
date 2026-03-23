@@ -26,37 +26,53 @@ pipeline:
         output_field: date
 
   - name: set_common_fields
+  - name: set_signin_fields
+    filter: '{{json_event.message.get("createdDateTime") != None}}'
 
 stages:
   set_common_fields:
     actions:
+      # Fields common to all event types
       - set:
           "@timestamp": "{{parsed_date.date}}"
 
           cloud.provider: "Azure"
           cloud.service.name: "Azure EntraId"
 
-          event.code: "{{json_event.message.status.errorCode}}"
-          event.outcome: "{{json_event.message.result}}"
-          event.action: "{{json_event.message.activityDisplayName}}"
-          error.message: "{{json_event.message.status.failureReason}}"
-          event.reason: "{{json_event.message.status.additionalDetails or json_event.message.resultReason}}"
-          event.dataset: "{{json_event.message.category}}"
-
-          event.provider: "{{json_event.message.resourceDisplayName or json_event.message.loggedByService}}"
-
+          azuread.tenantId: "{{json_event.message._meta.tenantId}}"
           trace.id: "{{json_event.message.correlationId}}"
 
           user.id: "{{json_event.message.userId or json_event.message.initiatedBy.user.id}}"
-          user.name: "{{json_event.message.userDisplayName or json_event.message.initiatedBy.user.displayName}}"
           user.email: "{{json_event.message.userPrincipalName or json_event.message.initiatedBy.user.userPrincipalName}}"
 
           source.ip: "{{json_event.message.ipAddress or json_event.message.initiatedBy.user.ipAddress}}"
           source.geo.city_name: "{{json_event.message.location.city}}"
           source.geo.region_name: "{{json_event.message.location.state}}"
-          source.geo.country_iso_code: "{{json_event.message.location.countryOrRegion}}"
+
+          azuread.properties.conditionalAccessStatus: "{{json_event.message.conditionalAccessStatus}}"
+          azuread.properties.riskDetail: "{{json_event.message.riskDetail}}"
+          azuread.properties.riskLevelAggregated: "{{json_event.message.riskLevelAggregated}}"
+          azuread.properties.riskLevelDuringSignIn: "{{json_event.message.riskLevelDuringSignIn}}"
+          azuread.properties.riskState: "{{json_event.message.riskState}}"
+          azuread.properties.riskEventTypes: "{{json_event.message.riskEventTypes}}"
+          azuread.properties.resourceId: "{{json_event.message.resourceId}}"
+
+      # Geo coordinates - only when geoCoordinates has content
+      - set:
           source.geo.location.lat: "{{json_event.message.location.geoCoordinates.latitude}}"
           source.geo.location.lon: "{{json_event.message.location.geoCoordinates.longitude}}"
+        filter: "{{json_event.message.get('location', {}).get('geoCoordinates', {}) | length > 0}}"
+
+      # Audit event specific fields
+      - set:
+          user.name: "{{json_event.message.userDisplayName or json_event.message.initiatedBy.user.displayName}}"
+          event.code: "{{json_event.message.status.errorCode}}"
+          event.outcome: "{{json_event.message.result}}"
+          event.action: "{{json_event.message.activityDisplayName}}"
+          event.reason: "{{json_event.message.status.additionalDetails or json_event.message.resultReason}}"
+          event.provider: "{{json_event.message.resourceDisplayName or json_event.message.loggedByService}}"
+          event.dataset: "{{json_event.message.category}}"
+          error.message: "{{json_event.message.status.failureReason}}"
 
           host.id: "{{json_event.message.deviceDetail.deviceId}}"
           host.name: "{{json_event.message.deviceDetail.displayName}}"
@@ -67,21 +83,23 @@ stages:
           service.id: "{{json_event.message.appId}}"
           service.name: "{{json_event.message.appDisplayName or json_event.message.loggedByService}}"
 
-          azure.entraid.properties.clientAppUsed: "{{json_event.message.clientAppUsed}}"
-          azure.entraid.properties.conditionalAccessStatus: "{{json_event.message.conditionalAccessStatus}}"
-          azure.entraid.properties.isInteractive: "{{json_event.message.isInteractive}}"
-          azure.entraid.properties.riskDetail: "{{json_event.message.riskDetail}}"
-          azure.entraid.properties.riskLevelAggregated: "{{json_event.message.riskLevelAggregated}}"
-          azure.entraid.properties.riskLevelDuringSignIn: "{{json_event.message.riskLevelDuringSignIn}}"
-          azure.entraid.properties.riskState: "{{json_event.message.riskState}}"
-          azure.entraid.properties.riskEventTypes: "{{json_event.message.riskEventTypes}}"
-          azure.entraid.properties.resourceId: "{{json_event.message.resourceId}}"
-          azure.entraid.properties.appliedConditionalAccessPolicies: "{{json_event.message.appliedConditionalAccessPolicies}}"
-          azure.entraid.properties.operationType: "{{json_event.message.operationType}}"
+          source.geo.country_iso_code: "{{json_event.message.location.countryOrRegion}}"
 
+          azuread.category: "AuditLogs"
+          azuread.operationName: "{{json_event.message.activityDisplayName}}"
+          azuread.correlationId: "{{json_event.message.correlationId}}"
+          azuread.callerIpAddress: "{{json_event.message.initiatedBy.user.ipAddress}}"
+          azuread.identity: "{{json_event.message.initiatedBy.user.displayName or json_event.message.initiatedBy.app.displayName}}"
+          azuread.properties.clientAppUsed: "{{json_event.message.clientAppUsed}}"
+          azuread.properties.isInteractive: "{{json_event.message.isInteractive}}"
+          azuread.properties.appliedConditionalAccessPolicies: "{{json_event.message.appliedConditionalAccessPolicies}}"
+          azuread.properties.operationType: "{{json_event.message.operationType}}"
+        filter: '{{json_event.message.get("activityDateTime") != None}}'
+
+      # TargetResources - User type (audit)
       - set:
           user.email: "{{json_event.message.targetResources[0].userPrincipalName}}"
-          azure.entraid.properties.modifiedProperties: >
+          azuread.properties.modifiedProperties: >
             [
             {% for item in json_event.message.targetResources %}
               {% if item.modifiedProperties != null %}
@@ -95,13 +113,118 @@ stages:
             ]
         filter: "{{json_event.message.targetResources | length > 0 and json_event.message.targetResources[0].type | lower == 'user'}}"
 
+      # TargetResources - Device type (audit)
       - set:
           host.id: "{{json_event.message.targetResources[0].id}}"
           host.name: "{{json_event.message.targetResources[0].displayName}}"
           host.os.name: "{{json_event.message.targetResources[0].operatingSystem}}"
         filter: "{{json_event.message.targetResources | length > 0 and json_event.message.targetResources[0].type | lower == 'device'}}"
 
+      # TargetResources - Application type (audit)
       - set:
           service.id: "{{json_event.message.targetResources[0].id}}"
           service.name: "{{json_event.message.targetResources[0].displayName}}"
         filter: "{{json_event.message.targetResources | length > 0 and json_event.message.targetResources[0].type | lower == 'application'}}"
+
+  set_signin_fields:
+    actions:
+      - set:
+          event.category: ["authentication"]
+          event.type: ["start"]
+          event.action: "Sign-in activity"
+          event.reason: "{{json_event.message.status.failureReason}}"
+
+          user.full_name: "{{json_event.message.userDisplayName}}"
+
+          error.code: "{{json_event.message.status.errorCode}}"
+          error.message: "{{json_event.message.status.additionalDetails or json_event.message.status.failureReason}}"
+
+          host.id: "{{json_event.message.deviceDetail.deviceId}}"
+          host.hostname: "{{json_event.message.deviceDetail.displayName}}"
+          host.os.type: "{{json_event.message.deviceDetail.operatingSystem}}"
+
+          user_agent.original: "{{json_event.message.userAgent}}"
+          user_agent.name: "{{json_event.message.deviceDetail.browser}}"
+
+          service.id: "{{json_event.message.appId}}"
+          service.name: "{{json_event.message.resourceDisplayName or json_event.message.appDisplayName}}"
+          service.type: "ldap"
+
+          # azuread top-level fields (envelope equivalents)
+          azuread.operationName: "Sign-in activity"
+          azuread.correlationId: "{{json_event.message.correlationId}}"
+          azuread.callerIpAddress: "{{json_event.message.ipAddress}}"
+          azuread.identity: "{{json_event.message.userDisplayName or json_event.message.servicePrincipalName}}"
+
+          # azuread top-level fields (from payload)
+          azuread.authenticationDetails: "{{json_event.message.authenticationDetails}}"
+          azuread.homeTenantId: "{{json_event.message.homeTenantId}}"
+          azuread.resourceTenantId: "{{json_event.message.resourceTenantId}}"
+          azuread.autonomousSystemNumber: "{{json_event.message.autonomousSystemNumber}}"
+          azuread.flaggedForReview: "{{json_event.message.flaggedForReview}}"
+          azuread.isTenantRestricted: "{{json_event.message.isTenantRestricted}}"
+          azuread.privateLinkDetails: "{{json_event.message.privateLinkDetails}}"
+          azuread.authenticationRequirement: "{{json_event.message.authenticationRequirement}}"
+          azuread.authenticationRequirementPolicies: "{{json_event.message.authenticationRequirementPolicies}}"
+          azuread.servicePrincipalId: "{{json_event.message.servicePrincipalId}}"
+          azuread.crossTenantAccessType: "{{json_event.message.crossTenantAccessType}}"
+
+          # azuread.properties.* fields
+          azuread.properties.id: "{{json_event.message.id}}"
+          azuread.properties.correlationId: "{{json_event.message.correlationId}}"
+          azuread.properties.appId: "{{json_event.message.appId}}"
+          azuread.properties.appDisplayName: "{{json_event.message.appDisplayName}}"
+          azuread.properties.authenticationProtocol: "{{json_event.message.authenticationProtocol}}"
+          azuread.properties.authenticationRequirement: "{{json_event.message.authenticationRequirement}}"
+          azuread.properties.incomingTokenType: "{{json_event.message.incomingTokenType}}"
+          azuread.properties.tokenIssuerType: "{{json_event.message.tokenIssuerType}}"
+          azuread.properties.userType: "{{json_event.message.userType}}"
+          azuread.properties.uniqueTokenIdentifier: "{{json_event.message.uniqueTokenIdentifier}}"
+          azuread.properties.original_transfer_method: "{{json_event.message.originalTransferMethod}}"
+          azuread.properties.session_id: "{{json_event.message.sessionId}}"
+          azuread.properties.status.errorCode: "{{json_event.message.status.errorCode}}"
+          azuread.properties.status.additionalDetails: "{{json_event.message.status.additionalDetails}}"
+          azuread.properties.status.failureReason: "{{json_event.message.status.failureReason}}"
+          azuread.properties.deviceDetail.isCompliant: "{{json_event.message.deviceDetail.isCompliant}}"
+          azuread.properties.deviceDetail.isManaged: "{{json_event.message.deviceDetail.isManaged}}"
+          azuread.properties.deviceDetail.trustType: "{{json_event.message.deviceDetail.trustType}}"
+          azuread.properties.riskEventTypes_v2: "{{json_event.message.riskEventTypes_v2}}"
+          azuread.properties.servicePrincipalId: "{{json_event.message.servicePrincipalId}}"
+          azuread.properties.resourceOwnerTenantId: "{{json_event.message.resourceOwnerTenantId}}"
+
+      # Sign-in category from signInEventTypes
+      - set:
+          azuread.category: "SignInLogs"
+        filter: '{{json_event.message.get("signInEventTypes", []) | first == "interactiveUser"}}'
+      - set:
+          azuread.category: "NonInteractiveUserSignInLogs"
+        filter: '{{json_event.message.get("signInEventTypes", []) | first == "nonInteractiveUser"}}'
+      - set:
+          azuread.category: "ServicePrincipalSignInLogs"
+        filter: '{{json_event.message.get("signInEventTypes", []) | first == "servicePrincipal"}}'
+      - set:
+          azuread.category: "ManagedIdentitySignInLogs"
+        filter: '{{json_event.message.get("signInEventTypes", []) | first == "managedIdentity"}}'
+
+      # Event outcome based on errorCode
+      - set:
+          event.outcome: "success"
+          action.outcome: "success"
+        filter: "{{ json_event.message.status.errorCode == 0 }}"
+      - set:
+          event.outcome: "failure"
+          action.outcome: "failure"
+        filter: "{{ json_event.message.status.errorCode != 0 }}"
+
+      # Network location details
+      - set:
+          azuread.properties.network_location.network_type: "{{(json_event.message.networkLocationDetails | first).networkType}}"
+          azuread.properties.network_location.network_names: "{{(json_event.message.networkLocationDetails | first).networkNames}}"
+        filter: "{{json_event.message.get('networkLocationDetails', []) | length > 0}}"
+
+      # OAuth scope info from authenticationProcessingDetails
+      - set:
+          azuread.properties.oauth_scope_info: >
+            {%- for item in json_event.message.authenticationProcessingDetails -%}
+              {%- if item.key == 'Oauth Scope Info' -%}{{ item.value }}{%- endif -%}
+            {%- endfor -%}

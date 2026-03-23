@@ -11,6 +11,13 @@
       "provider": "Core Directory"
     },
     "@timestamp": "2018-01-09T21:20:02.721537Z",
+    "azuread": {
+      "callerIpAddress": "127.0.0.1",
+      "category": "AuditLogs",
+      "correlationId": "00000000-0000-0000-0000-000000000000",
+      "identity": "user1",
+      "operationName": "Add member to group"
+    },
     "cloud": {
       "provider": "Azure",
       "service": {

@@ -11,21 +11,22 @@
       "provider": "Core Directory"
     },
     "@timestamp": "2025-11-12T14:03:30.218714Z",
-    "azure": {
-      "entraid": {
-        "properties": {
-          "modifiedProperties": [
-            {
-              "displayName": "testValue2",
-              "newValue": "\"00000000-0000-0000-0000-000000000000\""
-            },
-            {
-              "displayName": "testValue3",
-              "newValue": "\"MGPWZXVdvYvPPHl\""
-            }
-          ],
-          "operationType": "Assign"
-        }
+    "azuread": {
+      "category": "AuditLogs",
+      "correlationId": "00000000-0000-0000-0000-000000000000",
+      "operationName": "Add registered owner to device",
+      "properties": {
+        "modifiedProperties": [
+          {
+            "displayName": "testValue2",
+            "newValue": "\"00000000-0000-0000-0000-000000000000\""
+          },
+          {
+            "displayName": "testValue3",
+            "newValue": "\"MGPWZXVdvYvPPHl\""
+          }
+        ],
+        "operationType": "Assign"
       }
     },
     "cloud": {

@@ -41,7 +41,7 @@
   "name": "Microsoft Entra ID (GCL)",
   "uuid": "8c4436a3-0351-4609-a65f-fcafbc5affb1",
   "slug": "azure-ad-gcl",
-  "version": "2.10.17",
+  "version": "2.10.18-dev.1",
   "categories": [
     "IAM"
   ],

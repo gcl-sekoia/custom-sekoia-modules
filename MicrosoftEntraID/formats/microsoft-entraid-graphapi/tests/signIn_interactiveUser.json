@@ -1,0 +1,146 @@
+{
+  "input": {
+    "message": "{\"id\": \"cb80a571-20dd-4a1a-a949-20ea29b71100\", \"agent\": {\"agentSubjectParentId\": \"\", \"agentSubjectType\": \"notAgentic\", \"agentType\": \"notAgentic\", \"parentAppId\": \"\"}, \"appDisplayName\": \"OfficeHome\", \"appId\": \"4765445b-32c6-49b0-83e6-1d93765276ca\", \"appOwnerTenantId\": \"f8cdef31-a31e-4b4a-93e4-5f571e91255a\", \"appliedConditionalAccessPolicies\": [], \"appliedEventListeners\": [], \"authenticationAppPolicyEvaluationDetails\": [], \"authenticationContextClassReferences\": [], \"authenticationDetails\": [{\"authenticationMethod\": \"Password\", \"authenticationMethodDetail\": \"Password in the cloud\", \"authenticationStepDateTime\": \"2026-03-23T20:04:06+00:00\", \"authenticationStepRequirement\": \"\", \"authenticationStepResultDetail\": \"Correct password\", \"succeeded\": true}], \"authenticationMethodsUsed\": [], \"authenticationProcessingDetails\": [{\"key\": \"Is Legacy Store Used\", \"value\": \"0\"}, {\"key\": \"Legacy Store Use Information\", \"value\": \"\"}], \"authenticationRequirement\": \"singleFactorAuthentication\", \"authenticationRequirementPolicies\": [], \"autonomousSystemNumber\": 12322, \"clientAppUsed\": \"Browser\", \"clientCredentialType\": \"none\", \"conditionalAccessAudiences\": [\"4765445b-32c6-49b0-83e6-1d93765276ca\", \"00000002-0000-0000-c000-000000000000\"], \"conditionalAccessStatus\": \"failure\", \"correlationId\": \"2c6ec31b-6e01-4bab-bf2d-79f5f00fe01b\", \"createdDateTime\": \"2026-03-23T20:04:06+00:00\", \"deviceDetail\": {\"browser\": \"Chrome 146.0.0\", \"deviceId\": \"\", \"displayName\": \"\", \"isCompliant\": false, \"isManaged\": false, \"operatingSystem\": \"Windows10\"}, \"flaggedForReview\": false, \"globalSecureAccessIpAddress\": \"\", \"homeTenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\", \"homeTenantName\": \"\", \"ipAddress\": \"2a01:e0a:4ed:f6d0:1036:86d7:522c:ab2\", \"isInteractive\": true, \"isTenantRestricted\": false, \"isThroughGlobalSecureAccess\": false, \"location\": {\"city\": \"Ville\", \"countryOrRegion\": \"FR\", \"geoCoordinates\": {\"latitude\": 49.55, \"longitude\": 2.95}, \"state\": \"Oise\"}, \"managedServiceIdentity\": {\"msiType\": \"none\"}, \"networkLocationDetails\": [], \"originalRequestId\": \"cb80a571-20dd-4a1a-a949-20ea29b71100\", \"originalTransferMethod\": \"none\", \"privateLinkDetails\": {\"policyId\": \"\", \"policyName\": \"\", \"resourceId\": \"\"}, \"processingTimeInMilliseconds\": 218, \"resourceDisplayName\": \"OfficeHome\", \"resourceId\": \"4765445b-32c6-49b0-83e6-1d93765276ca\", \"resourceServicePrincipalId\": \"\", \"resourceTenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\", \"riskDetail\": \"hidden\", \"riskEventTypes_v2\": [], \"riskLevelAggregated\": \"hidden\", \"riskLevelDuringSignIn\": \"hidden\", \"riskState\": \"none\", \"servicePrincipalCredentialThumbprint\": \"\", \"servicePrincipalId\": \"00000000-0000-0000-0000-000000000000\", \"sessionId\": \"0031511a-63eb-ff12-ed03-50f62751b780\", \"sessionLifetimePolicies\": [], \"signInEventTypes\": [\"interactiveUser\"], \"signInIdentifier\": \"alice@foggybunny.onmicrosoft.com\", \"signInTokenProtectionStatus\": \"none\", \"status\": {\"additionalDetails\": \"If this is unexpected, see the conditional access policy that applied to this request in the Azure Portal.\", \"errorCode\": 53003, \"failureReason\": \"Access has been blocked by Conditional Access policies. The access policy does not allow token issuance.\"}, \"tokenIssuerName\": \"\", \"tokenIssuerType\": \"AzureAD\", \"tokenProtectionStatusDetails\": {\"signInSessionStatus\": \"none\", \"signInSessionStatusCode\": 1002}, \"uniqueTokenIdentifier\": \"caWAy90gGkqpSSDqKbcRAA\", \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\", \"userDisplayName\": \"Alice L\", \"userId\": \"12b21892-2706-49f6-b2e7-06ec4e68c387\", \"userPrincipalName\": \"alice@foggybunny.onmicrosoft.com\", \"userType\": \"member\", \"_meta\": {\"tenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\"}}",
+    "sekoiaio": {
+      "intake": {
+        "dialect": "GraphAPI for Microsoft Entra ID / Azure AD (GCL)",
+        "dialect_uuid": "370f279b-439d-478b-a7b7-ac666fd06c65"
+      }
+    }
+  },
+  "expected": {
+    "message": "{\"id\": \"cb80a571-20dd-4a1a-a949-20ea29b71100\", \"agent\": {\"agentSubjectParentId\": \"\", \"agentSubjectType\": \"notAgentic\", \"agentType\": \"notAgentic\", \"parentAppId\": \"\"}, \"appDisplayName\": \"OfficeHome\", \"appId\": \"4765445b-32c6-49b0-83e6-1d93765276ca\", \"appOwnerTenantId\": \"f8cdef31-a31e-4b4a-93e4-5f571e91255a\", \"appliedConditionalAccessPolicies\": [], \"appliedEventListeners\": [], \"authenticationAppPolicyEvaluationDetails\": [], \"authenticationContextClassReferences\": [], \"authenticationDetails\": [{\"authenticationMethod\": \"Password\", \"authenticationMethodDetail\": \"Password in the cloud\", \"authenticationStepDateTime\": \"2026-03-23T20:04:06+00:00\", \"authenticationStepRequirement\": \"\", \"authenticationStepResultDetail\": \"Correct password\", \"succeeded\": true}], \"authenticationMethodsUsed\": [], \"authenticationProcessingDetails\": [{\"key\": \"Is Legacy Store Used\", \"value\": \"0\"}, {\"key\": \"Legacy Store Use Information\", \"value\": \"\"}], \"authenticationRequirement\": \"singleFactorAuthentication\", \"authenticationRequirementPolicies\": [], \"autonomousSystemNumber\": 12322, \"clientAppUsed\": \"Browser\", \"clientCredentialType\": \"none\", \"conditionalAccessAudiences\": [\"4765445b-32c6-49b0-83e6-1d93765276ca\", \"00000002-0000-0000-c000-000000000000\"], \"conditionalAccessStatus\": \"failure\", \"correlationId\": \"2c6ec31b-6e01-4bab-bf2d-79f5f00fe01b\", \"createdDateTime\": \"2026-03-23T20:04:06+00:00\", \"deviceDetail\": {\"browser\": \"Chrome 146.0.0\", \"deviceId\": \"\", \"displayName\": \"\", \"isCompliant\": false, \"isManaged\": false, \"operatingSystem\": \"Windows10\"}, \"flaggedForReview\": false, \"globalSecureAccessIpAddress\": \"\", \"homeTenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\", \"homeTenantName\": \"\", \"ipAddress\": \"2a01:e0a:4ed:f6d0:1036:86d7:522c:ab2\", \"isInteractive\": true, \"isTenantRestricted\": false, \"isThroughGlobalSecureAccess\": false, \"location\": {\"city\": \"Ville\", \"countryOrRegion\": \"FR\", \"geoCoordinates\": {\"latitude\": 49.55, \"longitude\": 2.95}, \"state\": \"Oise\"}, \"managedServiceIdentity\": {\"msiType\": \"none\"}, \"networkLocationDetails\": [], \"originalRequestId\": \"cb80a571-20dd-4a1a-a949-20ea29b71100\", \"originalTransferMethod\": \"none\", \"privateLinkDetails\": {\"policyId\": \"\", \"policyName\": \"\", \"resourceId\": \"\"}, \"processingTimeInMilliseconds\": 218, \"resourceDisplayName\": \"OfficeHome\", \"resourceId\": \"4765445b-32c6-49b0-83e6-1d93765276ca\", \"resourceServicePrincipalId\": \"\", \"resourceTenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\", \"riskDetail\": \"hidden\", \"riskEventTypes_v2\": [], \"riskLevelAggregated\": \"hidden\", \"riskLevelDuringSignIn\": \"hidden\", \"riskState\": \"none\", \"servicePrincipalCredentialThumbprint\": \"\", \"servicePrincipalId\": \"00000000-0000-0000-0000-000000000000\", \"sessionId\": \"0031511a-63eb-ff12-ed03-50f62751b780\", \"sessionLifetimePolicies\": [], \"signInEventTypes\": [\"interactiveUser\"], \"signInIdentifier\": \"alice@foggybunny.onmicrosoft.com\", \"signInTokenProtectionStatus\": \"none\", \"status\": {\"additionalDetails\": \"If this is unexpected, see the conditional access policy that applied to this request in the Azure Portal.\", \"errorCode\": 53003, \"failureReason\": \"Access has been blocked by Conditional Access policies. The access policy does not allow token issuance.\"}, \"tokenIssuerName\": \"\", \"tokenIssuerType\": \"AzureAD\", \"tokenProtectionStatusDetails\": {\"signInSessionStatus\": \"none\", \"signInSessionStatusCode\": 1002}, \"uniqueTokenIdentifier\": \"caWAy90gGkqpSSDqKbcRAA\", \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\", \"userDisplayName\": \"Alice L\", \"userId\": \"12b21892-2706-49f6-b2e7-06ec4e68c387\", \"userPrincipalName\": \"alice@foggybunny.onmicrosoft.com\", \"userType\": \"member\", \"_meta\": {\"tenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\"}}",
+    "event": {
+      "action": "Sign-in activity",
+      "category": [
+        "authentication"
+      ],
+      "outcome": "failure",
+      "reason": "Access has been blocked by Conditional Access policies. The access policy does not allow token issuance.",
+      "type": [
+        "start"
+      ]
+    },
+    "@timestamp": "2026-03-23T20:04:06Z",
+    "action": {
+      "outcome": "failure"
+    },
+    "azuread": {
+      "authenticationDetails": [
+        {
+          "authenticationMethod": "Password",
+          "authenticationMethodDetail": "Password in the cloud",
+          "authenticationStepDateTime": "2026-03-23T20:04:06+00:00",
+          "authenticationStepRequirement": "",
+          "authenticationStepResultDetail": "Correct password",
+          "succeeded": true
+        }
+      ],
+      "authenticationRequirement": "singleFactorAuthentication",
+      "authenticationRequirementPolicies": [],
+      "autonomousSystemNumber": 12322,
+      "callerIpAddress": "2a01:e0a:4ed:f6d0:1036:86d7:522c:ab2",
+      "category": "SignInLogs",
+      "correlationId": "2c6ec31b-6e01-4bab-bf2d-79f5f00fe01b",
+      "flaggedForReview": "false",
+      "homeTenantId": "eb18de9c-aff1-4d64-95b2-457b4946e3aa",
+      "identity": "Alice L",
+      "isTenantRestricted": "false",
+      "operationName": "Sign-in activity",
+      "privateLinkDetails": {
+        "policyId": "",
+        "policyName": "",
+        "resourceId": ""
+      },
+      "properties": {
+        "appDisplayName": "OfficeHome",
+        "appId": "4765445b-32c6-49b0-83e6-1d93765276ca",
+        "authenticationRequirement": "singleFactorAuthentication",
+        "conditionalAccessStatus": "failure",
+        "correlationId": "2c6ec31b-6e01-4bab-bf2d-79f5f00fe01b",
+        "deviceDetail": {
+          "isCompliant": "false",
+          "isManaged": "false"
+        },
+        "id": "cb80a571-20dd-4a1a-a949-20ea29b71100",
+        "original_transfer_method": "none",
+        "resourceId": "4765445b-32c6-49b0-83e6-1d93765276ca",
+        "riskDetail": "hidden",
+        "riskEventTypes_v2": [],
+        "riskLevelAggregated": "hidden",
+        "riskLevelDuringSignIn": "hidden",
+        "riskState": "none",
+        "servicePrincipalId": "00000000-0000-0000-0000-000000000000",
+        "session_id": "0031511a-63eb-ff12-ed03-50f62751b780",
+        "status": {
+          "additionalDetails": "If this is unexpected, see the conditional access policy that applied to this request in the Azure Portal.",
+          "errorCode": "53003",
+          "failureReason": "Access has been blocked by Conditional Access policies. The access policy does not allow token issuance."
+        },
+        "tokenIssuerType": "AzureAD",
+        "uniqueTokenIdentifier": "caWAy90gGkqpSSDqKbcRAA",
+        "userType": "member"
+      },
+      "resourceTenantId": "eb18de9c-aff1-4d64-95b2-457b4946e3aa",
+      "servicePrincipalId": "00000000-0000-0000-0000-000000000000",
+      "tenantId": "eb18de9c-aff1-4d64-95b2-457b4946e3aa"
+    },
+    "cloud": {
+      "provider": "Azure",
+      "service": {
+        "name": "Azure EntraId"
+      }
+    },
+    "error": {
+      "code": "53003",
+      "message": "If this is unexpected, see the conditional access policy that applied to this request in the Azure Portal."
+    },
+    "host": {
+      "os": {
+        "type": "Windows10"
+      }
+    },
+    "related": {
+      "ip": [
+        "2a01:e0a:4ed:f6d0:1036:86d7:522c:ab2"
+      ]
+    },
+    "service": {
+      "id": "4765445b-32c6-49b0-83e6-1d93765276ca",
+      "name": "OfficeHome",
+      "type": "ldap"
+    },
+    "source": {
+      "address": "2a01:e0a:4ed:f6d0:1036:86d7:522c:ab2",
+      "geo": {
+        "city_name": "Ville",
+        "location": {
+          "lat": 49.55,
+          "lon": 2.95
+        },
+        "region_name": "Oise"
+      },
+      "ip": "2a01:e0a:4ed:f6d0:1036:86d7:522c:ab2"
+    },
+    "trace": {
+      "id": "2c6ec31b-6e01-4bab-bf2d-79f5f00fe01b"
+    },
+    "user": {
+      "email": "alice@foggybunny.onmicrosoft.com",
+      "full_name": "Alice L",
+      "id": "12b21892-2706-49f6-b2e7-06ec4e68c387"
+    },
+    "user_agent": {
+      "device": {
+        "name": "Other"
+      },
+      "name": "Chrome",
+      "original": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "os": {
+        "name": "Windows",
+        "version": "10"
+      },
+      "version": "146.0.0"
+    }
+  }
+}

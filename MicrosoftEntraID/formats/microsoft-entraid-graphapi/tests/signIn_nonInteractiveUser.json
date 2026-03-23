@@ -1,0 +1,153 @@
+{
+  "input": {
+    "sekoiaio": {
+      "intake": {
+        "dialect": "GraphAPI for Microsoft Entra ID / Azure AD (GCL)",
+        "dialect_uuid": "370f279b-439d-478b-a7b7-ac666fd06c65"
+      }
+    },
+    "message": "{\"id\": \"aa93bd42-f715-4da1-be8d-cb03db5a1000\", \"agent\": {\"agentSubjectParentId\": \"\", \"agentSubjectType\": \"notAgentic\", \"agentType\": \"notAgentic\", \"parentAppId\": \"\"}, \"appDisplayName\": \"M365ChatClient\", \"appId\": \"c0ab8ce9-e9a0-42e7-b064-33d422df41f1\", \"appOwnerTenantId\": \"f8cdef31-a31e-4b4a-93e4-5f571e91255a\", \"appliedConditionalAccessPolicies\": [], \"appliedEventListeners\": [], \"authenticationAppPolicyEvaluationDetails\": [], \"authenticationContextClassReferences\": [], \"authenticationDetails\": [], \"authenticationMethodsUsed\": [], \"authenticationProcessingDetails\": [{\"key\": \"Is Legacy Store Used\", \"value\": \"0\"}, {\"key\": \"Legacy Store Use Information\", \"value\": \"\"}, {\"key\": \"Token Binding Attempted\", \"value\": \"True\"}, {\"key\": \"Root Key Type\", \"value\": \"Unknown\"}, {\"key\": \"Oauth Scope Info\", \"value\": \"[\\\"Media.ReadWrite.All\\\",\\\"Messaging.ReadWrite.All\\\"]\"}], \"authenticationRequirement\": \"singleFactorAuthentication\", \"authenticationRequirementPolicies\": [], \"autonomousSystemNumber\": 8075, \"clientAppUsed\": \"Browser\", \"clientCredentialType\": \"none\", \"conditionalAccessAudiences\": [\"c0ab8ce9-e9a0-42e7-b064-33d422df41f1\", \"cc15fd57-2c6c-4117-a88c-83b1d56b4bbe\"], \"conditionalAccessStatus\": \"success\", \"correlationId\": \"047e2d83-6de0-4d88-be52-cb88aa8dcdff\", \"createdDateTime\": \"2026-03-23T21:40:50+00:00\", \"deviceDetail\": {\"browser\": \"Firefox 148.0\", \"deviceId\": \"e89b6b6e-2e29-4b5a-a0b1-94a620a2e924\", \"displayName\": \"desktop-4932-vm\", \"isCompliant\": true, \"isManaged\": true, \"operatingSystem\": \"Windows10\", \"trustType\": \"Azure AD registered\"}, \"flaggedForReview\": false, \"globalSecureAccessIpAddress\": \"\", \"homeTenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\", \"homeTenantName\": \"\", \"ipAddress\": \"20.111.61.12\", \"isInteractive\": false, \"isTenantRestricted\": false, \"isThroughGlobalSecureAccess\": false, \"location\": {\"city\": \"Paris\", \"countryOrRegion\": \"FR\", \"geoCoordinates\": {\"latitude\": 48.861, \"longitude\": 2.338}, \"state\": \"Paris\"}, \"managedServiceIdentity\": {\"msiType\": \"none\"}, \"networkLocationDetails\": [{\"networkNames\": [\"Alice\"], \"networkType\": \"trustedNamedLocation\"}], \"originalRequestId\": \"aa93bd42-f715-4da1-be8d-cb03db5a1000\", \"originalTransferMethod\": \"none\", \"privateLinkDetails\": {\"policyId\": \"\", \"policyName\": \"\", \"resourceId\": \"\"}, \"processingTimeInMilliseconds\": 135, \"resourceDisplayName\": \"IC3 Gateway\", \"resourceId\": \"39aaf054-81a5-48c7-a4f8-0293012095b9\", \"resourceServicePrincipalId\": \"\", \"resourceTenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\", \"riskDetail\": \"hidden\", \"riskEventTypes_v2\": [], \"riskLevelAggregated\": \"hidden\", \"riskLevelDuringSignIn\": \"hidden\", \"riskState\": \"none\", \"servicePrincipalCredentialThumbprint\": \"\", \"servicePrincipalId\": \"00000000-0000-0000-0000-000000000000\", \"sessionId\": \"002e6aea-d589-3fdc-0ae0-6393572a38be\", \"sessionLifetimePolicies\": [], \"signInEventTypes\": [\"nonInteractiveUser\"], \"signInIdentifier\": \"\", \"signInTokenProtectionStatus\": \"unbound\", \"status\": {\"errorCode\": 0, \"failureReason\": \"Other.\"}, \"tokenIssuerName\": \"\", \"tokenIssuerType\": \"AzureAD\", \"tokenProtectionStatusDetails\": {\"signInSessionStatus\": \"unbound\", \"signInSessionStatusCode\": 1008}, \"uniqueTokenIdentifier\": \"Qr2TqhX3oU2-jcsD21oQAA\", \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0\", \"userDisplayName\": \"Alice L\", \"userId\": \"12b21892-2706-49f6-b2e7-06ec4e68c387\", \"userPrincipalName\": \"alice@foggybunny.onmicrosoft.com\", \"userType\": \"member\", \"_meta\": {\"tenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\"}}"
+  },
+  "expected": {
+    "message": "{\"id\": \"aa93bd42-f715-4da1-be8d-cb03db5a1000\", \"agent\": {\"agentSubjectParentId\": \"\", \"agentSubjectType\": \"notAgentic\", \"agentType\": \"notAgentic\", \"parentAppId\": \"\"}, \"appDisplayName\": \"M365ChatClient\", \"appId\": \"c0ab8ce9-e9a0-42e7-b064-33d422df41f1\", \"appOwnerTenantId\": \"f8cdef31-a31e-4b4a-93e4-5f571e91255a\", \"appliedConditionalAccessPolicies\": [], \"appliedEventListeners\": [], \"authenticationAppPolicyEvaluationDetails\": [], \"authenticationContextClassReferences\": [], \"authenticationDetails\": [], \"authenticationMethodsUsed\": [], \"authenticationProcessingDetails\": [{\"key\": \"Is Legacy Store Used\", \"value\": \"0\"}, {\"key\": \"Legacy Store Use Information\", \"value\": \"\"}, {\"key\": \"Token Binding Attempted\", \"value\": \"True\"}, {\"key\": \"Root Key Type\", \"value\": \"Unknown\"}, {\"key\": \"Oauth Scope Info\", \"value\": \"[\\\"Media.ReadWrite.All\\\",\\\"Messaging.ReadWrite.All\\\"]\"}], \"authenticationRequirement\": \"singleFactorAuthentication\", \"authenticationRequirementPolicies\": [], \"autonomousSystemNumber\": 8075, \"clientAppUsed\": \"Browser\", \"clientCredentialType\": \"none\", \"conditionalAccessAudiences\": [\"c0ab8ce9-e9a0-42e7-b064-33d422df41f1\", \"cc15fd57-2c6c-4117-a88c-83b1d56b4bbe\"], \"conditionalAccessStatus\": \"success\", \"correlationId\": \"047e2d83-6de0-4d88-be52-cb88aa8dcdff\", \"createdDateTime\": \"2026-03-23T21:40:50+00:00\", \"deviceDetail\": {\"browser\": \"Firefox 148.0\", \"deviceId\": \"e89b6b6e-2e29-4b5a-a0b1-94a620a2e924\", \"displayName\": \"desktop-4932-vm\", \"isCompliant\": true, \"isManaged\": true, \"operatingSystem\": \"Windows10\", \"trustType\": \"Azure AD registered\"}, \"flaggedForReview\": false, \"globalSecureAccessIpAddress\": \"\", \"homeTenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\", \"homeTenantName\": \"\", \"ipAddress\": \"20.111.61.12\", \"isInteractive\": false, \"isTenantRestricted\": false, \"isThroughGlobalSecureAccess\": false, \"location\": {\"city\": \"Paris\", \"countryOrRegion\": \"FR\", \"geoCoordinates\": {\"latitude\": 48.861, \"longitude\": 2.338}, \"state\": \"Paris\"}, \"managedServiceIdentity\": {\"msiType\": \"none\"}, \"networkLocationDetails\": [{\"networkNames\": [\"Alice\"], \"networkType\": \"trustedNamedLocation\"}], \"originalRequestId\": \"aa93bd42-f715-4da1-be8d-cb03db5a1000\", \"originalTransferMethod\": \"none\", \"privateLinkDetails\": {\"policyId\": \"\", \"policyName\": \"\", \"resourceId\": \"\"}, \"processingTimeInMilliseconds\": 135, \"resourceDisplayName\": \"IC3 Gateway\", \"resourceId\": \"39aaf054-81a5-48c7-a4f8-0293012095b9\", \"resourceServicePrincipalId\": \"\", \"resourceTenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\", \"riskDetail\": \"hidden\", \"riskEventTypes_v2\": [], \"riskLevelAggregated\": \"hidden\", \"riskLevelDuringSignIn\": \"hidden\", \"riskState\": \"none\", \"servicePrincipalCredentialThumbprint\": \"\", \"servicePrincipalId\": \"00000000-0000-0000-0000-000000000000\", \"sessionId\": \"002e6aea-d589-3fdc-0ae0-6393572a38be\", \"sessionLifetimePolicies\": [], \"signInEventTypes\": [\"nonInteractiveUser\"], \"signInIdentifier\": \"\", \"signInTokenProtectionStatus\": \"unbound\", \"status\": {\"errorCode\": 0, \"failureReason\": \"Other.\"}, \"tokenIssuerName\": \"\", \"tokenIssuerType\": \"AzureAD\", \"tokenProtectionStatusDetails\": {\"signInSessionStatus\": \"unbound\", \"signInSessionStatusCode\": 1008}, \"uniqueTokenIdentifier\": \"Qr2TqhX3oU2-jcsD21oQAA\", \"userAgent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0\", \"userDisplayName\": \"Alice L\", \"userId\": \"12b21892-2706-49f6-b2e7-06ec4e68c387\", \"userPrincipalName\": \"alice@foggybunny.onmicrosoft.com\", \"userType\": \"member\", \"_meta\": {\"tenantId\": \"eb18de9c-aff1-4d64-95b2-457b4946e3aa\"}}",
+    "event": {
+      "action": "Sign-in activity",
+      "category": [
+        "authentication"
+      ],
+      "outcome": "success",
+      "reason": "Other.",
+      "type": [
+        "start"
+      ]
+    },
+    "@timestamp": "2026-03-23T21:40:50Z",
+    "action": {
+      "outcome": "success"
+    },
+    "azuread": {
+      "authenticationDetails": [],
+      "authenticationRequirement": "singleFactorAuthentication",
+      "authenticationRequirementPolicies": [],
+      "autonomousSystemNumber": 8075,
+      "callerIpAddress": "20.111.61.12",
+      "category": "NonInteractiveUserSignInLogs",
+      "correlationId": "047e2d83-6de0-4d88-be52-cb88aa8dcdff",
+      "flaggedForReview": "false",
+      "homeTenantId": "eb18de9c-aff1-4d64-95b2-457b4946e3aa",
+      "identity": "Alice L",
+      "isTenantRestricted": "false",
+      "operationName": "Sign-in activity",
+      "privateLinkDetails": {
+        "policyId": "",
+        "policyName": "",
+        "resourceId": ""
+      },
+      "properties": {
+        "appDisplayName": "M365ChatClient",
+        "appId": "c0ab8ce9-e9a0-42e7-b064-33d422df41f1",
+        "authenticationRequirement": "singleFactorAuthentication",
+        "conditionalAccessStatus": "success",
+        "correlationId": "047e2d83-6de0-4d88-be52-cb88aa8dcdff",
+        "deviceDetail": {
+          "isCompliant": "true",
+          "isManaged": "true",
+          "trustType": "Azure AD registered"
+        },
+        "id": "aa93bd42-f715-4da1-be8d-cb03db5a1000",
+        "network_location": {
+          "network_names": [
+            "Alice"
+          ],
+          "network_type": "trustedNamedLocation"
+        },
+        "oauth_scope_info": [
+          "Media.ReadWrite.All",
+          "Messaging.ReadWrite.All"
+        ],
+        "original_transfer_method": "none",
+        "resourceId": "39aaf054-81a5-48c7-a4f8-0293012095b9",
+        "riskDetail": "hidden",
+        "riskEventTypes_v2": [],
+        "riskLevelAggregated": "hidden",
+        "riskLevelDuringSignIn": "hidden",
+        "riskState": "none",
+        "servicePrincipalId": "00000000-0000-0000-0000-000000000000",
+        "session_id": "002e6aea-d589-3fdc-0ae0-6393572a38be",
+        "status": {
+          "errorCode": "0",
+          "failureReason": "Other."
+        },
+        "tokenIssuerType": "AzureAD",
+        "uniqueTokenIdentifier": "Qr2TqhX3oU2-jcsD21oQAA",
+        "userType": "member"
+      },
+      "resourceTenantId": "eb18de9c-aff1-4d64-95b2-457b4946e3aa",
+      "servicePrincipalId": "00000000-0000-0000-0000-000000000000",
+      "tenantId": "eb18de9c-aff1-4d64-95b2-457b4946e3aa"
+    },
+    "cloud": {
+      "provider": "Azure",
+      "service": {
+        "name": "Azure EntraId"
+      }
+    },
+    "error": {
+      "code": "0",
+      "message": "Other."
+    },
+    "host": {
+      "hostname": "desktop-4932-vm",
+      "id": "e89b6b6e-2e29-4b5a-a0b1-94a620a2e924",
+      "name": "desktop-4932-vm",
+      "os": {
+        "type": "Windows10"
+      }
+    },
+    "related": {
+      "hosts": [
+        "desktop-4932-vm"
+      ],
+      "ip": [
+        "20.111.61.12"
+      ]
+    },
+    "service": {
+      "id": "c0ab8ce9-e9a0-42e7-b064-33d422df41f1",
+      "name": "IC3 Gateway",
+      "type": "ldap"
+    },
+    "source": {
+      "address": "20.111.61.12",
+      "geo": {
+        "city_name": "Paris",
+        "location": {
+          "lat": 48.861,
+          "lon": 2.338
+        },
+        "region_name": "Paris"
+      },
+      "ip": "20.111.61.12"
+    },
+    "trace": {
+      "id": "047e2d83-6de0-4d88-be52-cb88aa8dcdff"
+    },
+    "user": {
+      "email": "alice@foggybunny.onmicrosoft.com",
+      "full_name": "Alice L",
+      "id": "12b21892-2706-49f6-b2e7-06ec4e68c387"
+    },
+    "user_agent": {
+      "device": {
+        "name": "Other"
+      },
+      "name": "Firefox",
+      "original": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0",
+      "os": {
+        "name": "Windows",
+        "version": "10"
+      },
+      "version": "148.0"
+    }
+  }
+}

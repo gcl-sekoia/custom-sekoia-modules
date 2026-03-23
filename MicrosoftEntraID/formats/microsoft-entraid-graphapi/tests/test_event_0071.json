@@ -11,11 +11,12 @@
       "provider": "Core Directory"
     },
     "@timestamp": "2025-11-12T14:04:58.507645Z",
-    "azure": {
-      "entraid": {
-        "properties": {
-          "operationType": "Assign"
-        }
+    "azuread": {
+      "category": "AuditLogs",
+      "correlationId": "00000000-0000-0000-0000-000000000000",
+      "operationName": "Add member to group",
+      "properties": {
+        "operationType": "Assign"
       }
     },
     "cloud": {

@@ -11,11 +11,12 @@
       "provider": "Core Directory"
     },
     "@timestamp": "2025-11-12T13:59:30.202566Z",
-    "azure": {
-      "entraid": {
-        "properties": {
-          "operationType": "Delete"
-        }
+    "azuread": {
+      "category": "AuditLogs",
+      "correlationId": "00000000-0000-0000-0000-000000000000",
+      "operationName": "Delete device",
+      "properties": {
+        "operationType": "Delete"
       }
     },
     "cloud": {

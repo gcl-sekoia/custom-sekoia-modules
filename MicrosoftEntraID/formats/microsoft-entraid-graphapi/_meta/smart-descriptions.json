@@ -1,45 +1,119 @@
 [
   {
-    "value": "Access status {azure.entraid.properties.conditionalAccessStatus} for user {user.name} from {source.ip} and risk state {azure.entraid.properties.riskState}",
+    "value": "{user.full_name} <{user.email}> signed-in on {service.name} from {source.ip}",
     "conditions": [
-      { "field": "azure.entraid.properties.conditionalAccessStatus" },
-      { "field": "azure.entraid.properties.riskState" },
+      { "field": "user.full_name" },
+      { "field": "user.email" },
+      { "field": "service.name" },
+      { "field": "source.ip" },
+      { "field": "azuread.properties.status.errorCode", "value": "0" }
+    ],
+    "relationships": [
+      {
+        "source": "user.email",
+        "target": "azuread.properties.appDisplayName",
+        "type": "sign-in to"
+      },
+      {
+        "source": "user.email",
+        "target": "source.ip",
+        "type": "uses"
+      }
+    ]
+  },
+  {
+    "value": "{user.full_name} <{user.email}> failed to signed-in on {service.name} from {source.ip} (error {azuread.properties.status.errorCode})",
+    "conditions": [
+      { "field": "user.full_name" },
+      { "field": "user.email" },
+      { "field": "service.name" },
+      { "field": "source.ip" },
+      { "field": "azuread.properties.status.errorCode" }
+    ],
+    "relationships": [
+      {
+        "source": "user.email",
+        "target": "service.name",
+        "type": "failed to sign in to"
+      },
+      {
+        "source": "user.email",
+        "target": "source.ip",
+        "type": "uses"
+      }
+    ]
+  },
+  {
+    "value": "{azuread.properties.appDisplayName} signed-in on {service.name} from {source.ip}",
+    "conditions": [
+      { "field": "azuread.properties.appDisplayName" },
+      { "field": "service.name" },
+      { "field": "source.ip" },
+      { "field": "azuread.properties.status.errorCode", "value": "0" }
+    ],
+    "relationships": [
+      {
+        "source": "azuread.properties.appDisplayName",
+        "target": "service.name",
+        "type": "sign-in to"
+      },
+      {
+        "source": "azuread.properties.appDisplayName",
+        "target": "source.ip",
+        "type": "uses"
+      }
+    ]
+  },
+  {
+    "value": "{azuread.properties.appDisplayName} failed to sign-in on {service.name} from {source.ip} (error {azuread.properties.status.errorCode})",
+    "conditions": [
+      { "field": "azuread.properties.appDisplayName" },
+      { "field": "service.name" },
+      { "field": "source.ip" },
+      { "field": "azuread.properties.status.errorCode" }
+    ],
+    "relationships": [
+      {
+        "source": "azuread.properties.appDisplayName",
+        "target": "service.name",
+        "type": "failed to sign in to"
+      },
+      {
+        "source": "azuread.properties.appDisplayName",
+        "target": "source.ip",
+        "type": "uses"
+      }
+    ]
+  },
+  {
+    "value": "{user.name} performed {event.action} from {source.ip}",
+    "conditions": [
+      { "field": "azuread.category", "value": "AuditLogs" },
       { "field": "user.name" },
+      { "field": "event.action" },
       { "field": "source.ip" }
     ]
   },
   {
-    "value": "Event from {event.dataset} for user {user.name} from {source.ip}",
+    "value": "{user.name} performed {event.action}",
     "conditions": [
-      { "field": "event.dataset" },
+      { "field": "azuread.category", "value": "AuditLogs" },
       { "field": "user.name" },
-      { "field": "source.ip" }
+      { "field": "event.action" }
     ]
   },
   {
-    "value": "Operation {event.action} with status {event.outcome} on {event.dataset} by user {user.name}",
+    "value": "{service.name} - {azuread.category}: {event.action}",
     "conditions": [
+      { "field": "service.name" },
       { "field": "event.action" },
-      { "field": "event.outcome" },
-      { "field": "event.dataset" },
-      { "field": "user.name" }
+      { "field": "azuread.category" }
     ]
   },
   {
-    "value": "Operation {event.action} with status {event.outcome} on {event.dataset} by user {user.email}",
+    "value": "{event.reason}",
     "conditions": [
-      { "field": "event.action" },
-      { "field": "event.outcome" },
-      { "field": "event.dataset" },
-      { "field": "user.email" }
-    ]
-  },
-  {
-    "value": "Operation {event.action} with status {event.outcome} on {event.dataset}",
-    "conditions": [
-      { "field": "event.action" },
-      { "field": "event.outcome" },
-      { "field": "event.dataset" }
+      { "field": "event.reason" }
     ]
   }
 ]

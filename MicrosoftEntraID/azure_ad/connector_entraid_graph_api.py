@@ -1,9 +1,11 @@
 import asyncio
+import json
 import time
 from datetime import timedelta
 from typing import Any, Optional
 
 from cachetools import Cache, LRUCache
+from kiota_abstractions.serialization import Parsable
 from loguru import logger
 from msgraph.generated.models.directory_audit import DirectoryAudit
 from msgraph_beta.generated.models.sign_in import SignIn
@@ -69,6 +71,14 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
         with checkpoint._context as ctx:
             ctx[key] = list(cache.keys())
 
+    def _encode_event(self, event: Parsable, object_type: str) -> str:
+        payload = json.loads(GraphApi.encode_log(event))
+        payload["_meta"] = {
+            "objectType": object_type,
+            "tenantId": self.module.configuration.tenant_id,
+        }
+        return json.dumps(payload)
+
     @property
     def client(self) -> GraphApi:  # pragma: no cover
         if not self._client:
@@ -103,7 +113,9 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
 
             events.append(event)
             if len(events) >= self.configuration.chunk_size:
-                total_events += len(await self.push_data_to_intakes([GraphApi.encode_log(event) for event in events]))
+                total_events += len(await self.push_data_to_intakes(
+                    [self._encode_event(event, "directoryAudit") for event in events]
+                ))
 
                 for data in events:
                     new_offset = max(new_offset, data.activity_date_time)
@@ -114,7 +126,9 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
                 events = []
 
         if events:
-            total_events += len(await self.push_data_to_intakes([GraphApi.encode_log(event) for event in events]))
+            total_events += len(await self.push_data_to_intakes(
+                [self._encode_event(event, "directoryAudit") for event in events]
+            ))
 
             for data in events:
                 new_offset = max(new_offset, data.activity_date_time)
@@ -150,7 +164,9 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
 
             events.append(event)
             if len(events) >= self.configuration.chunk_size:
-                total_events += len(await self.push_data_to_intakes([GraphApi.encode_log(e) for e in events]))
+                total_events += len(await self.push_data_to_intakes(
+                    [self._encode_event(e, "signIn") for e in events]
+                ))
 
                 for data in events:
                     new_offset = max(new_offset, data.created_date_time)
@@ -161,7 +177,9 @@ class MicrosoftEntraIdGraphApiConnector(AsyncConnector):
                 events = []
 
         if events:
-            total_events += len(await self.push_data_to_intakes([GraphApi.encode_log(e) for e in events]))
+            total_events += len(await self.push_data_to_intakes(
+                [self._encode_event(e, "signIn") for e in events]
+            ))
 
             for data in events:
                 new_offset = max(new_offset, data.created_date_time)

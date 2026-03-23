@@ -11,11 +11,12 @@
       "provider": "Core Directory"
     },
     "@timestamp": "2025-11-12T14:06:02.898026Z",
-    "azure": {
-      "entraid": {
-        "properties": {
-          "operationType": "Update"
-        }
+    "azuread": {
+      "category": "AuditLogs",
+      "correlationId": "testestest",
+      "operationName": "Update device",
+      "properties": {
+        "operationType": "Update"
       }
     },
     "cloud": {
