@@ -1,0 +1,32 @@
+{
+  "name": "Run Starlark Script (branches)",
+  "description": "Execute a Starlark (Python-like) script that transforms data and routes the flow to one of three branches. `return <data>` fires the centered branch; `return left(<data>)` / `return right(<data>)` fire a side; `return stop()` halts.",
+  "uuid": "b7491bc9-3190-4110-8a9e-0ce8c94ab952",
+  "docker_parameters": "RunScriptBranchesAction",
+  "arguments": {
+    "title": "RunScriptArguments",
+    "type": "object",
+    "properties": {
+      "script": {
+        "title": "Script",
+        "description": "Starlark script defining `def main(arguments): ...`. Return data (centered branch), left(data)/right(data) for a side, or stop() to halt.",
+        "type": "string"
+      },
+      "arguments": {
+        "title": "Arguments",
+        "description": "Input object passed to the script as `arguments` (typically wired from previous playbook nodes).",
+        "type": "object"
+      }
+    },
+    "required": [
+      "script"
+    ]
+  },
+  "outputs": {
+    "left": "Fires when the script returns left(<data>).",
+    "main": "Fires when the script returns data directly (the centered, primary branch).",
+    "right": "Fires when the script returns right(<data>)."
+  },
+  "results": {},
+  "slug": "run_script_branches"
+}

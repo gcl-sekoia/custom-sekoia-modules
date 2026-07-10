@@ -3,67 +3,63 @@
 Run a [Starlark](https://github.com/bazelbuild/starlark) script inside a
 playbook. Starlark is a small, deterministic, Python-like language: familiar
 syntax (functions, `if`, comprehensions, dicts/lists) but no I/O, no imports and
-no filesystem or network access. This action lets a single script replace a
-graph of transform / filter nodes.
+no filesystem or network access. This lets a single script replace a graph of
+transform / filter / branch nodes.
+
+The module provides two actions with the same script API, differing only in how
+many output branches they expose:
+
+- **Run Starlark Script** — one output. A transform or filter.
+- **Run Starlark Script (branches)** — three outputs (`left`, `main`, `right`)
+  for routing the flow.
 
 ## The script contract
 
-Your script must define an entrypoint:
+Your script defines `main(arguments)` and expresses its outcome entirely through
+`return`:
 
 ```python
 def main(arguments):
-    # arguments is the "Arguments" input object (typically wired from
-    # previous playbook nodes)
-    return {"result": "any JSON-serialisable value"}
+    return {"result": "any JSON-serialisable value"}   # continue with this data
 ```
 
-`main` is called with the `arguments` object and its return value becomes the
-action's results. A non-object return (list, string, number) is wrapped as
-`{"result": <value>}`.
+`arguments` is the input object (typically wired from previous nodes). A non-object
+return (list, string, number) is wrapped as `{"result": <value>}`.
+
+## Return values and routing
+
+- `return <data>` — continue on the primary branch, carrying `<data>` as the
+  node's results. On the branches action this is the centered `main` branch.
+- `return stop(reason=None)` — halt: no branch fires, so nothing downstream runs.
+  The optional `reason` is logged.
+- **Branches action only:** `return left(<data>)` / `return right(<data>)` —
+  continue on the left / right branch instead of the center, carrying `<data>`.
 
 ## Available builtins
 
-Beyond the Starlark core (functions, control flow, comprehensions, `str`,
-`int`, `dict`, `list`, string/`dict`/`list` methods), these are enabled:
-
-- `json.encode(v)` / `json.decode(s)`
-- `map`, `filter`, `partial`
-- `struct(...)`, `record(...)`, `enum(...)`
-- type annotations (`Typing`)
-
-## Output and flow control
-
-The action has three output branches, laid out left-to-right in the editor:
-`left`, `default` (centered), `right`. Behaviour:
-
-- Call **neither** `output` nor `stop` → the centered `default` fires and carries
-  the returned results to the next node.
-- `output("left")` / `output("right")` → that side fires instead of `default`
-  (pick one; a later `output(...)` replaces an earlier one).
-- `stop()` → no branch fires, halting the flow (a **filter**). The script still
-  runs to completion and its return value is recorded; the flow just stops here.
+Beyond the Starlark core (functions, control flow, comprehensions, `str`, `int`,
+`dict`, `list`, string/`dict`/`list` methods), these are enabled: `json.encode` /
+`json.decode`, `map`, `filter`, `partial`, `struct`, `record`, `enum`, and type
+annotations.
 
 ## Host helpers
 
-Three functions are injected by the action:
-
 - `log(message)` — record a message in the action logs.
-- `output(name)` — fire one branch: `"left"`, `"default"` or `"right"` (an
-  unknown name is an error).
-- `stop(reason=None)` — halt the flow (fire no branch); the optional `reason`
-  is logged.
+- `stop(reason=None)`, `left(data)`, `right(data)` — returned to route the flow
+  (see above); `left`/`right` exist only on the branches action.
 
-## Example
+## Example (branches action)
 
 ```python
 def main(arguments):
-    high = [a for a in arguments["alerts"] if a["severity"] >= 8]
+    alerts = arguments["alerts"]
+    high = [a for a in alerts if a["severity"] >= 8]
     if len(high) == 0:
-        stop("no high-severity alerts")
-    elif len(high) > 10:
-        output("right")   # e.g. escalate
-    log("kept %d of %d alerts" % (len(high), len(arguments["alerts"])))
-    return {"high_severity": high, "count": len(high)}
+        return stop("no high-severity alerts")
+    if len(high) > 10:
+        return right({"high": high, "count": len(high)})   # e.g. escalate
+    log("kept %d of %d alerts" % (len(high), len(alerts)))
+    return {"high": high, "count": len(high)}               # normal path (center)
 ```
 
 ## Limitations

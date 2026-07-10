@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-07-10 - 1.0.4
+
+### Changed
+
+- Routing and data are now both expressed through `return`, instead of mixing a
+  returned value with `output()`/`stop()` side-effects. A bare `return <data>`
+  continues on the primary branch; `return stop(reason)` halts; `left`/`right`
+  builders route to a side branch on the branches action.
+
+### Added
+
+- Second action **Run Starlark Script (branches)** with three outputs
+  (`left`, `main` centered, `right`). The original **Run Starlark Script** keeps
+  a single output. Both share one runtime.
+
 ## 2026-07-10 - 1.0.3
 
 ### Added
