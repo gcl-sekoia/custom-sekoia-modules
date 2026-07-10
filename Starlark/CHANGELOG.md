@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-07-10 - 1.1.0
+
+### Added
+
+- New action **Run Starlark Script (HTTP)** exposing an `http(method, url, headers,
+  body, credential)` primitive so a script can call an API. Credentials follow a
+  door model: the script names a credential but never receives its value — the host
+  injects it and enforces a per-credential `allowed_hosts` egress allowlist
+  (https-only). The script cannot read, log, return, or exfiltrate a secret.
+- Module configuration for credentials: a readable `credentials` JSON policy whose
+  per-credential `value` is a Fernet token, plus a single write-only `encryption_key`
+  secret. Values live (encrypted) in the readable field, so one can be added/rotated
+  without re-entering the others. Adds a `cryptography` dependency.
+
 ## 2026-07-10 - 1.0.6
 
 ### Added

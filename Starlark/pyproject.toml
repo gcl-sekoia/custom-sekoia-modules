@@ -36,6 +36,7 @@ starlark-pyo3 = "^2026.1"
 # Pinned: sekoia-automation-sdk 1.23 migrated Action argument validation from
 # pydantic.v1 to pydantic v2, which would break the pydantic.v1 argument models.
 pydantic = "2.10"
+cryptography = "*"
 
 [tool.poetry.dependencies.sekoia-automation-sdk]
 version = "1.22.3"

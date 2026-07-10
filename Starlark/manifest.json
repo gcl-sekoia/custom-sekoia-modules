@@ -2,13 +2,27 @@
   "configuration": {
     "title": "Starlark Script configuration",
     "type": "object",
-    "properties": {}
+    "properties": {
+      "credentials": {
+        "title": "Credentials",
+        "description": "JSON object mapping a credential name to its policy: {\"allowed_hosts\": [...], \"scheme\": \"header\", \"header\": \"Authorization\", \"template\": \"Bearer {value}\", \"value\": \"<Fernet-encrypted token>\"}. Readable/reviewable; the value is ciphertext, not the plaintext secret. Only used by the 'Run Starlark Script (HTTP)' action.",
+        "type": "string"
+      },
+      "encryption_key": {
+        "title": "Encryption key",
+        "description": "Fernet key that decrypts the credential values in the Credentials field. Write-only secret.",
+        "type": "string"
+      }
+    },
+    "secrets": [
+      "encryption_key"
+    ]
   },
   "description": "Run a Starlark (Python-like) script inside a playbook to transform data and route branches, replacing a graph of nodes with a single script.",
   "name": "Starlark Script (GCL)",
   "uuid": "b94ba300-bd6d-41d5-924a-57ebddaa054a",
   "slug": "starlark-gcl",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "categories": [
     "Generic"
   ]
