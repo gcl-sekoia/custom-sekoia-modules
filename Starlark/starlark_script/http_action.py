@@ -25,15 +25,90 @@ query/signing schemes can be added later without changing the config shape or th
 from __future__ import annotations
 
 import json
+import time
 from typing import Any
 from urllib.parse import urlparse
 
 import requests
 from cryptography.fernet import Fernet, InvalidToken
 
-from .run_script import BaseRunScriptAction
+from .run_script import BaseRunScriptAction, format_time, parse_time
 
 HTTP_TIMEOUT = 30
+SEKOIA_API_BASE = "https://api.sekoia.io"
+POLL_INTERVAL = 1.5  # seconds between async-job status polls
+
+
+def _api(creds: dict, method: str, path: str, credential: Any, body: Any = None) -> Any:
+    """Authenticated call to the Sekoia API via the same door-model as http(): the
+    named credential must allowlist api.sekoia.io. Returns parsed JSON; raises on >=300."""
+    resp = do_request(creds, method, SEKOIA_API_BASE + path, body=body, credential=credential)
+    if resp["status"] >= 300:
+        raise HttpError("sekoia api %s %s -> HTTP %s" % (method, path, resp["status"]))
+    return resp["json"]
+
+
+def do_search_events(creds, query, earliest="-1h", latest="now", limit=100,
+                     communities=None, eternal=False, timeout=90, credential="sekoia_api"):
+    """Async Lucene event search (create -> poll -> fetch), host-side. Returns the
+    list of event objects. Relative/ISO/epoch times are normalised to ISO."""
+    body = {
+        "term": str(query), "filters": [], "visible": False,
+        "only_eternal": bool(eternal), "lenient": True,
+        "community_uuids": list(communities or []),
+        "earliest_time": format_time(parse_time(earliest)),
+        "latest_time": format_time(parse_time(latest)),
+    }
+    job = _api(creds, "POST", "/v1/sic/conf/events/search/jobs", credential, body)
+    uuid = job["uuid"]
+    deadline = time.monotonic() + float(timeout)
+    status = None
+    while True:
+        status = _api(creds, "GET", "/v1/sic/conf/events/search/jobs/%s" % uuid, credential)
+        if status.get("status") in (2, 3):
+            break
+        if time.monotonic() > deadline:
+            raise HttpError("search_events timed out after %ss" % timeout)
+        time.sleep(POLL_INTERVAL)
+    if status.get("status") == 3:
+        raise HttpError("search_events: job was cancelled/failed")
+    evs = _api(creds, "GET",
+               "/v1/sic/conf/events/search/jobs/%s/events?limit=%d" % (uuid, int(limit)), credential)
+    return evs.get("items") or []
+
+
+def do_sol(creds, query, communities=None, intakes=None, limit=1000, timeout=90, credential="sekoia_api"):
+    """Async SOL / notebook query (create -> poll -> paginate results), host-side.
+    Returns the list of result rows."""
+    qd = {"ql_query": str(query), "community_uuids": list(communities or [])}
+    if intakes is not None:
+        qd["intake_uuids"] = list(intakes)
+    created = _api(creds, "POST", "/v1/notebooks/queries/runs", credential, {"query_definition": qd})
+    uuid = created["uuid"]
+    terminal = {"finished", "failed", "error", "cancelled", "canceled"}
+    deadline = time.monotonic() + float(timeout)
+    run = None
+    while True:
+        run = _api(creds, "GET", "/v1/notebooks/queries/runs/%s?limit=1" % uuid, credential)
+        if (run.get("status") or "").lower() in terminal:
+            break
+        if time.monotonic() > deadline:
+            raise HttpError("sol timed out after %ss" % timeout)
+        time.sleep(POLL_INTERVAL)
+    if (run.get("status") or "").lower() != "finished":
+        raise HttpError("sol: run ended with status %r" % run.get("status"))
+    rows, off, lim = [], 0, int(limit)
+    while len(rows) < lim:
+        page = _api(creds, "GET",
+                    "/v1/notebooks/queries/runs/%s?limit=%d&offset=%d" % (uuid, min(1000, lim - len(rows)), off),
+                    credential)
+        batch = page.get("results") or []
+        rows.extend(batch)
+        off += len(batch)
+        total = page.get("total")
+        if not batch or (total is not None and off >= total):
+            break
+    return rows
 
 
 class HttpError(Exception):
@@ -148,6 +223,12 @@ class RunScriptHttpAction(BaseRunScriptAction):
         primitives["http"] = lambda method, url, headers=None, body=None, credential=None: do_request(
             creds, method, url, headers, body, credential
         )
+        primitives["search_events"] = lambda query, earliest="-1h", latest="now", limit=100, \
+            communities=None, eternal=False, timeout=90, credential="sekoia_api": do_search_events(
+                creds, query, earliest, latest, limit, communities, eternal, timeout, credential)
+        primitives["sol"] = lambda query, communities=None, intakes=None, limit=1000, \
+            timeout=90, credential="sekoia_api": do_sol(
+                creds, query, communities, intakes, limit, timeout, credential)
         return primitives
 
     def _config_dict(self) -> dict:

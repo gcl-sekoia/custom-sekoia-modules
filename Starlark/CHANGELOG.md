@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-07-10 - 1.1.4
+
+### Added
+
+- `now()`, `parse_time(x)`, `format_time(epoch)` time primitives (all actions) -- the VM has no
+  clock; interval math is then float arithmetic in the script.
+- `search_events(query, earliest, latest, limit, ...)` and `sol(query, communities, intakes, ...)`
+  primitives (HTTP action) -- host-side async create->poll->fetch over the Lucene event-search and
+  SOL/notebook APIs, authenticated with a door-model `sekoia_api` credential.
+
 ## 2026-07-10 - 1.1.3
 
 ### Added

@@ -1,3 +1,5 @@
+import datetime as _dt
+import re
 import time
 from typing import Any
 
@@ -12,6 +14,49 @@ from .runtime import ScriptError, StarlarkScript
 # returning a bare dict with this exact single key would collide; the name is
 # chosen to make that effectively impossible.
 ROUTE_MARKER = "__starlark_result__"
+
+# --- time helpers (host-side; the Starlark VM has no clock). Exposed as the
+# now()/parse_time()/format_time() primitives. Interval math is then plain float
+# arithmetic in the script (e.g. parse_time(fs) - 300). NOTE: now()/parse_time("now")
+# make a script non-deterministic -- acceptable for a SOAR runtime (already breached
+# by http()/sleep()), just don't expect hermetic evaluation. ---
+_REL = re.compile(r"([+-])(\d+)([smhd])")
+_UNIT = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+
+
+def _now_epoch() -> float:
+    return _dt.datetime.now(_dt.timezone.utc).timestamp()
+
+
+def parse_time(value: Any) -> float:
+    """Epoch seconds (float) from an epoch, an ISO-8601 string, or a relative
+    expression ('now', '-1h', '+30m', '-2d')."""
+    if isinstance(value, bool):
+        raise ValueError("parse_time: expected a time, got a bool")
+    if isinstance(value, (int, float)):
+        return float(value)
+    s = str(value).strip()
+    if s == "now":
+        return _now_epoch()
+    m = _REL.fullmatch(s)
+    if m:
+        sign = 1 if m.group(1) == "+" else -1
+        return _now_epoch() + sign * int(m.group(2)) * _UNIT[m.group(3)]
+    try:
+        dt = _dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
+    except ValueError:
+        try:
+            return float(s)          # epoch-as-string
+        except ValueError:
+            raise ValueError("parse_time: cannot parse %r (want epoch, ISO-8601, or '-1h'/'now')" % value)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=_dt.timezone.utc)
+    return dt.timestamp()
+
+
+def format_time(epoch: Any) -> str:
+    """ISO-8601 UTC string (what the search / SOL APIs want) from epoch seconds."""
+    return _dt.datetime.fromtimestamp(float(epoch), _dt.timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 class RunScriptArguments(BaseModel):
@@ -89,7 +134,13 @@ class BaseRunScriptAction(Action):
             time.sleep(secs)
             return None
 
-        return {"log": log, "output": output, "stop": stop, "sleep": sleep}
+        def now() -> float:
+            return _now_epoch()
+
+        return {
+            "log": log, "output": output, "stop": stop, "sleep": sleep,
+            "now": now, "parse_time": parse_time, "format_time": format_time,
+        }
 
     def _route(self, returned: Any) -> dict | None:
         if isinstance(returned, dict) and len(returned) == 1 and ROUTE_MARKER in returned:
