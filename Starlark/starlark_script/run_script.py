@@ -6,10 +6,10 @@ from sekoia_automation.action import Action
 from .base import StarlarkModule
 from .runtime import ScriptError, StarlarkScript
 
-# Reserved key that tags the value a routing builder (`left`/`right`/`stop`)
-# returns, so the runtime can tell "route to a branch" from "plain result data".
-# A script returning a bare dict with this exact single key would collide; the
-# name is chosen to make that effectively impossible.
+# Reserved key that tags the value a routing builder (`output`/`stop`) returns,
+# so the runtime can tell "route to a branch" from "plain result data". A script
+# returning a bare dict with this exact single key would collide; the name is
+# chosen to make that effectively impossible.
 ROUTE_MARKER = "__starlark_result__"
 
 
@@ -29,14 +29,14 @@ class RunScriptArguments(BaseModel):
 class BaseRunScriptAction(Action):
     """Runs a Starlark script and routes its `return` to an output branch.
 
-    Subclasses set `OUTPUTS` (the branch names, in left-to-right editor order) and
-    `CENTER` (the primary branch a bare `return <data>` targets). The non-center
-    branches are exposed to the script as builder functions of the same name, so a
-    script routes by returning `left(data)` / `right(data)` / `stop(reason)`; a bare
-    `return <data>` uses `CENTER`.
+    A bare `return <data>` fires `CENTER` (set by the subclass); `return
+    output(name, data)` fires an arbitrary branch by name; `return stop(reason)`
+    fires none (halts). Branch names are not restricted to the manifest-declared
+    outputs: the engine routes purely by name against the node's wiring, and node
+    outputs are editable in the playbook, so a script can target a hand-wired
+    branch. A name wired to nothing simply stops the flow there.
     """
 
-    OUTPUTS: tuple[str, ...] = ("default",)
     CENTER: str = "default"
     module: StarlarkModule
 
@@ -54,26 +54,13 @@ class BaseRunScriptAction(Action):
         def log(message: Any) -> None:
             self.log(str(message), level="info")
 
+        def output(name: Any, data: Any = None) -> dict:
+            return {ROUTE_MARKER: {"branch": str(name), "data": data}}
+
         def stop(reason: Any = None) -> dict:
             return {ROUTE_MARKER: {"branch": None, "reason": reason, "data": None}}
 
-        primitives: dict[str, Any] = {"log": log, "stop": stop}
-
-        # Each non-center branch becomes a builder of the same name. Only declared
-        # side branches are injected, so a script referencing an unavailable branch
-        # (e.g. `right(...)` on the single-output action) fails to compile.
-        for branch in self.OUTPUTS:
-            if branch != self.CENTER:
-                primitives[branch] = self._make_builder(branch)
-
-        return primitives
-
-    @staticmethod
-    def _make_builder(branch: str):
-        def builder(data: Any = None) -> dict:
-            return {ROUTE_MARKER: {"branch": branch, "data": data}}
-
-        return builder
+        return {"log": log, "output": output, "stop": stop}
 
     def _route(self, returned: Any) -> dict | None:
         if isinstance(returned, dict) and len(returned) == 1 and ROUTE_MARKER in returned:
@@ -108,7 +95,6 @@ class RunScriptAction(BaseRunScriptAction):
         "Execute a Starlark (Python-like) script to transform or filter data, "
         "replacing a graph of nodes with a single script."
     )
-    OUTPUTS = ("default",)
     CENTER = "default"
 
 
@@ -118,7 +104,6 @@ class RunScriptBranchesAction(BaseRunScriptAction):
         "Execute a Starlark (Python-like) script that transforms data and routes the "
         "flow to one of three branches (left / center / right)."
     )
-    # Order = left-to-right layout; `main` is the centered primary. Not named
-    # "default" on purpose (the platform pins a branch named "default" to the edge).
-    OUTPUTS = ("left", "main", "right")
+    # `main` is the centered primary. Not named "default" on purpose (the platform
+    # pins a branch named "default" to the edge, preventing a centered layout).
     CENTER = "main"

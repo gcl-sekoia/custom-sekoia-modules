@@ -1,6 +1,6 @@
 {
   "name": "Run Starlark Script (branches)",
-  "description": "Execute a Starlark (Python-like) script that transforms data and routes the flow to one of three branches. `return <data>` fires the centered branch; `return left(<data>)` / `return right(<data>)` fire a side; `return stop()` halts.",
+  "description": "Execute a Starlark (Python-like) script that transforms data and routes the flow to one of three branches. `return <data>` fires the centered branch; `return output(\"left\"|\"right\", <data>)` fires a side; `return stop()` halts.",
   "uuid": "b7491bc9-3190-4110-8a9e-0ce8c94ab952",
   "docker_parameters": "RunScriptBranchesAction",
   "arguments": {
@@ -9,7 +9,7 @@
     "properties": {
       "script": {
         "title": "Script",
-        "description": "Starlark script defining `def main(arguments): ...`. Return data (centered branch), left(data)/right(data) for a side, or stop() to halt.",
+        "description": "Starlark script defining `def main(arguments): ...`. Return data (centered branch), output(name, data) for a side/custom branch, or stop() to halt.",
         "type": "string"
       },
       "arguments": {

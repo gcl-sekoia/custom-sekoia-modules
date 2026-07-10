@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-07-10 - 1.0.5
+
+### Changed
+
+- Routing now uses a single `output(name, data=None)` builder that can address
+  any branch by name, replacing the fixed `left`/`right` builders. Node output
+  branches are editable in the playbook and routed by name (the manifest outputs
+  are only an editor hint), so a script can target a hand-wired branch. Documented
+  in CONFIGURE.md.
+
 ## 2026-07-10 - 1.0.4
 
 ### Changed

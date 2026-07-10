@@ -29,11 +29,24 @@ return (list, string, number) is wrapped as `{"result": <value>}`.
 ## Return values and routing
 
 - `return <data>` — continue on the primary branch, carrying `<data>` as the
-  node's results. On the branches action this is the centered `main` branch.
+  node's results. That is the single output of **Run Starlark Script**, and the
+  centered `main` of **Run Starlark Script (branches)**.
+- `return output(name, data=None)` — continue on the branch called `name`,
+  carrying `data`. On the branches action, `output("left", …)` / `output("right", …)`
+  target the two sides.
 - `return stop(reason=None)` — halt: no branch fires, so nothing downstream runs.
   The optional `reason` is logged.
-- **Branches action only:** `return left(<data>)` / `return right(<data>)` —
-  continue on the left / right branch instead of the center, carrying `<data>`.
+
+### Custom / editable outputs
+
+The output branches shown on a node are only a default. In the playbook editor
+(or the workflow JSON) you can **wire additional branches by any name** — the
+engine routes purely by matching the name a script emits against what the node
+wires, and it does not check either against this action's declared outputs. So
+`return output("quarantine", data)` works as long as a `quarantine` branch is
+wired on the node; a name wired to nothing simply stops the flow there. A script
+that raises an error additionally emits an `error` branch you can wire for
+error handling.
 
 ## Available builtins
 
@@ -45,8 +58,8 @@ annotations.
 ## Host helpers
 
 - `log(message)` — record a message in the action logs.
-- `stop(reason=None)`, `left(data)`, `right(data)` — returned to route the flow
-  (see above); `left`/`right` exist only on the branches action.
+- `output(name, data=None)`, `stop(reason=None)` — returned to route the flow
+  (see above).
 
 ## Example (branches action)
 
@@ -57,9 +70,9 @@ def main(arguments):
     if len(high) == 0:
         return stop("no high-severity alerts")
     if len(high) > 10:
-        return right({"high": high, "count": len(high)})   # e.g. escalate
+        return output("right", {"high": high, "count": len(high)})   # e.g. escalate
     log("kept %d of %d alerts" % (len(high), len(alerts)))
-    return {"high": high, "count": len(high)}               # normal path (center)
+    return {"high": high, "count": len(high)}                        # normal path (center)
 ```
 
 ## Limitations

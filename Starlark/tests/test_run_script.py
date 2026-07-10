@@ -32,10 +32,22 @@ def test_scalar_return_is_wrapped(action):
     assert action.outputs == {"default": True}
 
 
-def test_stop_halts_without_results(action):
+def test_output_routes_arbitrary_branch_with_data(action):
     results = action.run(
-        {"script": "def main(arguments):\n    return stop('too low')\n"}
+        {"script": "def main(arguments):\n    return output('escalate', {'v': 7})\n"}
     )
+    assert results == {"v": 7}
+    assert action.outputs == {"escalate": True}
+
+
+def test_output_without_data(action):
+    results = action.run({"script": "def main(arguments):\n    return output('skip')\n"})
+    assert results == {"result": None}
+    assert action.outputs == {"skip": True}
+
+
+def test_stop_halts_without_results(action):
+    results = action.run({"script": "def main(arguments):\n    return stop('too low')\n"})
     assert results is None
     assert action.outputs == {"default": False}
     assert any("flow stopped: too low" in e["message"] for e in action.logs)
@@ -52,14 +64,6 @@ def test_log_is_recorded(action):
     assert any(e["message"] == "hello" for e in action.logs)
 
 
-def test_side_builders_are_unavailable_on_single_output(action):
-    results = action.run(
-        {"script": "def main(arguments):\n    return left({})\n"}
-    )
-    assert results is None
-    assert "left" in action.error_message
-
-
 def test_bad_script_sets_error_and_returns_none(action):
     results = action.run({"script": "def main(arguments):\n    fail('boom')\n"})
     assert results is None
@@ -73,15 +77,9 @@ def test_branches_return_data_fires_center(branches):
 
 
 @pytest.mark.parametrize("side", ["left", "right"])
-def test_branches_side_builder_routes_and_carries_data(branches, side):
+def test_branches_output_routes_declared_side(branches, side):
     results = branches.run(
-        {"script": f"def main(arguments):\n    return {side}({{'v': arguments['v']}})\n", "arguments": {"v": 9}}
+        {"script": f"def main(arguments):\n    return output('{side}', {{'v': arguments['v']}})\n", "arguments": {"v": 9}}
     )
     assert results == {"v": 9}
     assert branches.outputs == {side: True}
-
-
-def test_branches_stop_halts(branches):
-    results = branches.run({"script": "def main(arguments):\n    return stop()\n"})
-    assert results is None
-    assert branches.outputs == {"main": False}
