@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `README.md` documenting the module (actions, script contract, HTTP credential model,
   development).
 
-### Note
+### Changed
 
 - Declaring `encryption_key` makes the module carry a secret, so every action now
   fetches secrets at start. Playbook nodes (which always have a configuration) are
