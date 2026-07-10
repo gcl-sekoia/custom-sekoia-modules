@@ -36,9 +36,9 @@ Copy `Starlark/` and rename rather than creating these from scratch — the
     "secrets": ["api_key"]
   },
   "description": "One-line description of the integration.",
-  "name": "My Module (GCL)",
+  "name": "My Module",
   "uuid": "<unique uuid>",
-  "slug": "my-module-gcl",
+  "slug": "my-module",
   "version": "1.0.0",
   "categories": ["Generic"],
   "supports_validation": false

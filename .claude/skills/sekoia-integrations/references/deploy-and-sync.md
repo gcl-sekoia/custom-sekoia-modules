@@ -67,7 +67,7 @@ connect) emits `{"type":"task","attributes":{"id","status","attributes":{
 "validation_steps"}}}`. You must connect **before** creating the task or you miss its
 events, so for one-off deploys plain `/v1/tasks/<id>` polling is simpler.
 
-## Known GCL specifics (this environment)
+## Known specifics (this environment)
 
 - `ssh_key_id` for `from-git`: `a5774fa4-e348-489b-9de6-6042d9263342`.
 - Custom-modules repo: `https://github.com/gcl-sekoia/custom-sekoia-modules`

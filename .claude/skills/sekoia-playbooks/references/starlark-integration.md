@@ -7,8 +7,8 @@ nodes with one script.
 
 ## Deployed identifiers (this environment)
 
-- Module `Starlark Script (GCL)` — uuid `b94ba300-bd6d-41d5-924a-57ebddaa054a`,
-  slug `starlark-gcl`.
+- Module `Starlark Script` — uuid `b94ba300-bd6d-41d5-924a-57ebddaa054a`,
+  slug `starlark-script`.
 - Action **Run Starlark Script** — uuid `c4ada6f6-0855-4e07-876e-f1a051cfa920`,
   `docker_parameters` `RunScriptAction`. One output branch: `default`.
 - Action **Run Starlark Script (branches)** — uuid

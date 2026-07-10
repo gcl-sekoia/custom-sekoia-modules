@@ -1,11 +1,11 @@
-# Starlark Script (GCL)
+# Starlark Script
 
 A custom Sekoia integration that runs a [Starlark](https://github.com/bazelbuild/starlark)
 script — a small, deterministic, Python-like language — inside a playbook node, so a
 single script can replace a graph of transform / filter / branch nodes. One action can
 also make outbound HTTP calls with injected credentials the script never sees.
 
-Module UUID `b94ba300-bd6d-41d5-924a-57ebddaa054a`, slug `starlark-gcl`.
+Module UUID `b94ba300-bd6d-41d5-924a-57ebddaa054a`, slug `starlark-script`.
 
 ## Actions
 

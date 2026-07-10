@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-07-10 - 1.1.1
+
+### Changed
+
+- Renamed the module from "Starlark Script (GCL)" to "Starlark Script" and the slug
+  from `starlark-gcl` to `starlark-script`.
+
 ## 2026-07-10 - 1.1.0
 
 ### Added
