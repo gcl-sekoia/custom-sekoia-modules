@@ -78,7 +78,14 @@ Copy `Starlark/` and rename rather than creating these from scratch — the
 - `outputs` maps branch name → description (an editor hint; a node can wire other
   names too — see the sekoia-playbooks skill). `results` is the output-data schema,
   or `{}` if dynamic/none.
-- Every `uuid` (module and each action) must be globally unique on the platform.
+- Every `uuid` (module and each action) must be globally unique on the platform
+  (enforced by the "Validating unicity of UUIDs" deploy step). Because UUIDs are
+  platform-global, **one manifest = one deployment**: you can't deploy the same
+  manifest (same UUIDs) into two communities, or alongside another copy. To run "the
+  same" integration more than once — a second community, or a fork that coexists with
+  the official version — copy the code but give it a fresh set of UUIDs (module + every
+  action) and a distinct `slug`/`name`. Stamp them with a build step rather than by
+  hand if you maintain several copies.
 
 ## main.py (entrypoint & registration)
 
