@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-07-10 - 1.1.5
+
+### Changed
+
+- Credential decryption is now **lazy / per-credential**: a value is
+  decrypted only when its credential is used, so one un-sealed or mis-keyed credential no longer breaks
+  every other credential on the action (errors are scoped to the credential actually used).
+
 ## 2026-07-10 - 1.1.4
 
 ### Added

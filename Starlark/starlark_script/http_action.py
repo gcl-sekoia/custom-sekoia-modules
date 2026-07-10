@@ -118,38 +118,41 @@ class HttpError(Exception):
 
 
 def parse_credentials(credentials_json: str | None, encryption_key: str | None) -> dict[str, dict]:
-    """Resolve name -> credential from the plain policy JSON, decrypting each `value`
-    Fernet token with `encryption_key`. Decryption happens host-side; the plaintext
-    never leaves this process (and never reaches the Starlark VM)."""
+    """Parse the plain policy JSON into name -> credential. Decryption is **lazy**: the
+    encrypted `value` (Fernet token) and the key are stored and only resolved when a
+    credential is actually used (see `_resolve_value`). This scopes any decryption
+    failure to the one credential that's used -- a single un-sealed or mis-keyed
+    credential no longer breaks every other credential on the action."""
     policy = json.loads(credentials_json) if credentials_json else {}
-    if not policy:
-        return {}
-    # Build the cipher lazily: a credential with only allowed_hosts (no encrypted
-    # value) needs no key, so requiring one upfront would break allowlist-only creds.
-    fernet = None
-
     creds: dict[str, dict] = {}
     for name, pol in policy.items():
-        token = pol.get("value")
-        value = None
-        if token is not None:
-            if not encryption_key:
-                raise HttpError(f"credential {name!r} has an encrypted value but encryption_key is not set")
-            if fernet is None:
-                fernet = Fernet(encryption_key.encode() if isinstance(encryption_key, str) else encryption_key)
-            try:
-                value = fernet.decrypt(token.encode()).decode()
-            except (InvalidToken, ValueError, TypeError):
-                # Sanitized: never surface the token or key material.
-                raise HttpError(f"could not decrypt value for credential {name!r}")
         creds[name] = {
             "allowed_hosts": pol.get("allowed_hosts") or [],
             "scheme": pol.get("scheme"),
             "header": pol.get("header"),
             "template": pol.get("template", "{value}"),
-            "value": value,
+            "_token": pol.get("value"),   # still-encrypted Fernet token, or None
+            "_key": encryption_key,
+            "_name": name,
         }
     return creds
+
+
+def _resolve_value(cred: dict) -> str | None:
+    """Decrypt a credential's Fernet `value` on demand. Returns None for an
+    allowlist-only credential (no value). Errors are scoped to THIS credential --
+    raised only when it is used, never surfacing the token or key material."""
+    token = cred.get("_token")
+    if token is None:
+        return None
+    key = cred.get("_key")
+    if not key:
+        raise HttpError(f"credential {cred['_name']!r} has an encrypted value but encryption_key is not set")
+    try:
+        fernet = Fernet(key.encode() if isinstance(key, str) else key)
+        return fernet.decrypt(token.encode()).decode()
+    except (InvalidToken, ValueError, TypeError):
+        raise HttpError(f"could not decrypt value for credential {cred['_name']!r}")
 
 
 def _inject(headers: dict, cred: dict) -> dict:
@@ -159,7 +162,7 @@ def _inject(headers: dict, cred: dict) -> dict:
     if not cred.get("header"):
         raise HttpError("credential policy is missing 'header'")
     headers = dict(headers)
-    headers[cred["header"]] = cred["template"].format(value=cred["value"])
+    headers[cred["header"]] = cred["template"].format(value=_resolve_value(cred))
     return headers
 
 

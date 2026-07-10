@@ -42,21 +42,41 @@ class FakeResponse:
         return self._payload
 
 
-def test_parse_credentials_decrypts_values(key):
+def test_parse_credentials_is_lazy_and_resolves_on_use(key):
+    # parse does NOT decrypt; the value resolves only when the credential is used
     creds = parse_credentials(policy(key), key)
-    assert creds["vendor"]["value"] == "s3cr3t"
     assert creds["vendor"]["allowed_hosts"] == ["api.vendor.com"]
+    assert "value" not in creds["vendor"]
+    assert http_action._resolve_value(creds["vendor"]) == "s3cr3t"
 
 
-def test_parse_credentials_requires_key_when_configured(key):
+def test_missing_key_errors_only_on_use(key):
+    creds = parse_credentials(policy(key), None)   # parse succeeds (lazy)
     with pytest.raises(HttpError, match="has an encrypted value but encryption_key is not set"):
-        parse_credentials(policy(key), None)
+        http_action._resolve_value(creds["vendor"])
 
 
-def test_parse_credentials_bad_token_is_sanitized(key):
-    bad = json.dumps({"vendor": {"value": "not-a-token", "allowed_hosts": []}})
+def test_bad_token_errors_only_on_use(key):
+    creds = parse_credentials(json.dumps({"vendor": {"value": "not-a-token", "allowed_hosts": []}}), key)
     with pytest.raises(HttpError, match="could not decrypt value for credential 'vendor'"):
-        parse_credentials(bad, key)
+        http_action._resolve_value(creds["vendor"])
+
+
+def test_one_bad_credential_does_not_break_a_good_one(key, monkeypatch):
+    # a mis-keyed 'broken' credential must NOT stop 'vendor' from working
+    other_key = Fernet.generate_key().decode()
+    both = json.dumps({
+        "vendor": json.loads(policy(key))["vendor"],
+        "broken": {"allowed_hosts": ["api.other.com"], "scheme": "header",
+                   "header": "Authorization", "template": "Bearer {value}", "value": seal(other_key, "x")},
+    })
+    creds = parse_credentials(both, key)   # both parse fine (lazy) even though 'broken' is mis-keyed
+    monkeypatch.setattr(http_action.requests, "request",
+                        lambda *a, **k: FakeResponse(200, {"ok": True}))
+    assert do_request(creds, "get", "https://api.vendor.com/x", credential="vendor") == {
+        "status": 200, "headers": {"Content-Type": "application/json"}, "json": {"ok": True}, "body": ""}
+    with pytest.raises(HttpError, match="could not decrypt value for credential 'broken'"):
+        do_request(creds, "get", "https://api.other.com/x", credential="broken")
 
 
 def test_request_injects_secret_and_returns_response(key, monkeypatch):
