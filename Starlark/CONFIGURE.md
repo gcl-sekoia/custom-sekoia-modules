@@ -4,7 +4,7 @@ Run a [Starlark](https://github.com/bazelbuild/starlark) script inside a
 playbook. Starlark is a small, deterministic, Python-like language: familiar
 syntax (functions, `if`, comprehensions, dicts/lists) but no I/O, no imports and
 no filesystem or network access. This action lets a single script replace a
-graph of transform / filter / branch nodes.
+graph of transform / filter nodes.
 
 ## The script contract
 
@@ -31,21 +31,29 @@ Beyond the Starlark core (functions, control flow, comprehensions, `str`,
 - `struct(...)`, `record(...)`, `enum(...)`
 - type annotations (`Typing`)
 
+## Output and flow control
+
+The action has a single output branch (`default`), which fires by default and
+carries the returned results to the next node. To act as a **filter** — halt the
+playbook here and run nothing downstream — call `stop()`; the `default` branch is
+then withheld. The script still runs to completion and its return value is
+recorded, but the flow does not continue.
+
 ## Host helpers
 
 Two functions are injected by the action:
 
 - `log(message)` — record a message in the action logs.
-- `set_output(name)` — activate the named playbook output branch, so the script
-  can drive conditional routing (e.g. `set_output("malicious")`).
+- `stop(reason=None)` — halt the flow (withhold the `default` branch); the
+  optional `reason` is logged.
 
 ## Example
 
 ```python
 def main(arguments):
     high = [a for a in arguments["alerts"] if a["severity"] >= 8]
-    if len(high) > 0:
-        set_output("has_high_severity")
+    if len(high) == 0:
+        stop("no high-severity alerts")
     log("kept %d of %d alerts" % (len(high), len(arguments["alerts"])))
     return {"high_severity": high, "count": len(high)}
 ```

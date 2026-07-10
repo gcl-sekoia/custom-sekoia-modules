@@ -23,8 +23,8 @@ class RunScriptArguments(BaseModel):
 class RunScriptAction(Action):
     name = "Run Starlark Script"
     description = (
-        "Execute a Starlark (Python-like) script to transform data and route playbook "
-        "branches, replacing a graph of nodes with a single script."
+        "Execute a Starlark (Python-like) script to transform data, replacing a graph "
+        "of nodes with a single script."
     )
     module: StarlarkModule
 
@@ -40,16 +40,20 @@ class RunScriptAction(Action):
 
     def _primitives(self) -> dict[str, Any]:
         """Host callables exposed to the script. `log` surfaces a message in the
-        action logs; `set_output` activates a playbook output branch by name so a
-        script can drive conditional routing."""
+        action logs; `stop` withholds the single `default` output branch so the
+        playbook flow halts here (a filter), optionally logging a reason."""
 
         def log(message: Any) -> None:
             self.log(str(message), level="info")
 
-        def set_output(name: Any) -> None:
-            self.set_output(str(name))
+        def stop(reason: Any = None) -> None:
+            if reason is not None:
+                self.log(f"flow stopped: {reason}", level="info")
+            # `default` fires implicitly only when no output is set; setting it
+            # False explicitly is what suppresses the downstream flow.
+            self.set_output("default", False)
 
-        return {"log": log, "set_output": set_output}
+        return {"log": log, "stop": stop}
 
     @staticmethod
     def _as_results(value: Any) -> dict:

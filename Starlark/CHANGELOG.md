@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-07-10 - 1.0.2
+
+### Changed
+
+- The action now has a single `default` output branch. Removed the script
+  `set_output` helper: with one branch there is nothing to route, and activating
+  a named branch silently suppressed `default` and stalled the flow.
+
+### Added
+
+- Script `stop(reason=None)` helper: withholds the `default` branch to halt the
+  playbook (a filter), optionally logging a reason.
+
 ## 2026-07-10 - 1.0.1
 
 ### Changed

@@ -25,17 +25,26 @@ def test_scalar_return_is_wrapped(action):
     assert results == {"result": 42}
 
 
-def test_set_output_activates_branch(action):
+def test_default_branch_fires_when_not_stopped(action):
+    action.run({"script": "def main(arguments):\n    return {}\n"})
+    assert action.outputs == {}
+
+
+def test_stop_withholds_default_branch(action):
     script = (
         "def main(arguments):\n"
-        "    if arguments['score'] > 50:\n"
-        "        set_output('malicious')\n"
-        "    else:\n"
-        "        set_output('benign')\n"
+        "    if arguments['score'] < 50:\n"
+        "        stop('score too low')\n"
         "    return {}\n"
     )
-    action.run({"script": script, "arguments": {"score": 90}})
-    assert action.outputs == {"malicious": True}
+    action.run({"script": script, "arguments": {"score": 10}})
+    assert action.outputs == {"default": False}
+    assert any("flow stopped: score too low" in e["message"] for e in action.logs)
+
+
+def test_stop_without_reason(action):
+    action.run({"script": "def main(arguments):\n    stop()\n    return {}\n"})
+    assert action.outputs == {"default": False}
 
 
 def test_log_is_recorded(action):
