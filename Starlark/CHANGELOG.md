@@ -1,16 +1,20 @@
 # Changelog
 
-## 1.1.3
-
-- Add `sleep(seconds)` primitive (bounded per-call/per-run) for pacing poll loops over async APIs.
-
-
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 2026-07-10 - 1.1.3
+
+### Added
+
+- `sleep(seconds)` primitive (all Run Script actions) for pacing poll loops over
+  async APIs. Bounded per call (`SLEEP_MAX_CALL`, 30s) and per run
+  (`SLEEP_MAX_TOTAL`, 240s); validates the argument and raises when the run's sleep
+  budget is exhausted.
 
 ## 2026-07-10 - 1.1.2
 
