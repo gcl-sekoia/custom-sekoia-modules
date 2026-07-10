@@ -84,6 +84,38 @@ the platform invokes the container with that name as the command; `module.run()`
 dispatches to the matching class. A mismatch means "Could not find any Action or
 Trigger matching command".
 
+## Actions that call an HTTP API
+
+Most real actions call some API — the vendor's, or Sekoia's own. Two patterns:
+
+- **`GenericAPIAction`** (batteries-included) — subclass it and set `verb`, `endpoint`,
+  `query_parameters`; it builds the URL from the module config `base_url` + `endpoint`
+  (substituting `{path}` params from arguments), sets `Authorization: Bearer <api_key>`
+  from the module config, sends with retries, and returns `response.json()`. The entire
+  Sekoia.io integration is `GenericAPIAction` subclasses hitting `api/v1/sic/...` with
+  a configured `api_key` secret. Use it when an action is "call this endpoint with a
+  configured key".
+  ```python
+  from sekoia_automation.action import GenericAPIAction
+  ListThings = type("ListThings", (GenericAPIAction,),
+      {"verb": "get", "endpoint": "api/v1/things", "query_parameters": ["limit"]})
+  ```
+- **Manual** — in a custom `run()`, read `self.module.configuration.<field>` and call
+  `requests`/`httpx` yourself (the SDK also has async helpers under
+  `sekoia_automation.aio.helpers.http`). Use when you need custom auth/flow.
+
+Credentials for either come from the **module configuration** (an `api_key`/token
+declared in `secrets`), fetched securely at action start. Note `ModuleItem.token` is
+NOT an API token — it's only the callback the action uses to report status/results.
+
+**Door-model credential injection (advanced).** When an action runs *user-supplied
+logic* that must use a secret without seeing it (like the Starlark HTTP action), inject
+host-side: the user names a credential, the action resolves the value from config,
+enforces an egress allowlist, and adds it to the outbound request — the value never
+reaches the user code. The Starlark module stores such credentials as a readable JSON
+policy whose values are Fernet tokens plus one write-only `encryption_key` secret; see
+its `http_action.py` and README for the full pattern.
+
 ## Designing a higher-level script API (optional pattern)
 
 `set_output` is low-level. If an action takes user logic (like the Starlark module),

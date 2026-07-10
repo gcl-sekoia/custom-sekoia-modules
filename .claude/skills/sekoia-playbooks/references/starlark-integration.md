@@ -8,15 +8,19 @@ nodes with one script.
 ## Deployed identifiers (this environment)
 
 - Module `Starlark Script (GCL)` — uuid `b94ba300-bd6d-41d5-924a-57ebddaa054a`,
-  slug `starlark-gcl`. No module configuration required.
+  slug `starlark-gcl`.
 - Action **Run Starlark Script** — uuid `c4ada6f6-0855-4e07-876e-f1a051cfa920`,
   `docker_parameters` `RunScriptAction`. One output branch: `default`.
 - Action **Run Starlark Script (branches)** — uuid
   `b7491bc9-3190-4110-8a9e-0ce8c94ab952`, `docker_parameters`
   `RunScriptBranchesAction`. Three outputs: `left`, `main` (centered), `right`.
+- Action **Run Starlark Script (HTTP)** — uuid
+  `e2b6d9a1-4f8c-4d2e-9a3b-1c7f5e0a6d94`, `docker_parameters` `RunScriptHttpAction`.
+  One output (`default`), plus an `http()` primitive for outbound calls with injected
+  credentials (see "Calling HTTP APIs" below).
 
-Both actions share the same script API and take the same arguments. Confirm they're
-live with `GET /v1/symphony/modules/b94ba300-...` and re-check UUIDs with
+All three share the same script API and arguments. Confirm they're live with
+`GET /v1/symphony/modules/b94ba300-...` and re-check UUIDs with
 `GET /v1/symphony/modules?limit=100` if this environment differs. If it isn't
 installed in your environment, deploying/updating it is the integration-authoring
 skill's job, not this one.
@@ -117,6 +121,33 @@ def main(arguments):
         return output("left", {"score": score})     # e.g. auto-close path
     return {"score": score}                          # normal path (center = main)
 ```
+
+## Calling HTTP APIs (HTTP action only)
+
+`Run Starlark Script (HTTP)` adds an `http()` primitive:
+
+```python
+def main(arguments):
+    r = http("GET", "https://api.vendor.com/things/" + arguments["id"], credential="vendor_api")
+    return {"count": r["json"]["count"]}          # r = {"status","headers","json","body"}
+```
+
+Credentials follow a **door model**: the script only *names* a credential
+(`credential="vendor_api"`); it never receives the secret value. The host looks up the
+credential, checks the URL host against the credential's allowlist, injects the secret,
+and performs the request. So a script can use a credential but cannot read, log, return,
+or exfiltrate it. Every request must name a credential, and the target must be in that
+credential's `allowed_hosts` (https only) — otherwise the call is refused.
+
+Credentials are set in the **module configuration** (so this action needs a module
+configuration selected on its node):
+- `credentials` — a readable JSON policy: `name → {allowed_hosts, scheme:"header",
+  header, template, value}`, where `value` is a Fernet-encrypted token.
+- `encryption_key` — the write-only secret Fernet key that decrypts those values.
+
+To seal a value, the operator uses the module's `seal.py` (`genkey`, then
+`seal <ENV_VAR>`); see the integration's README. Authoring the action itself belongs
+to the `sekoia-integrations` skill.
 
 ## Testing a script fast
 

@@ -20,6 +20,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   per-credential `value` is a Fernet token, plus a single write-only `encryption_key`
   secret. Values live (encrypted) in the readable field, so one can be added/rotated
   without re-entering the others. Adds a `cryptography` dependency.
+- `seal.py` helper (`genkey` / `seal <ENV_VAR>`) to generate the Fernet key and seal
+  credential values, taking both inputs from the environment (never argv).
+- `README.md` documenting the module (actions, script contract, HTTP credential model,
+  development).
+
+### Note
+
+- Declaring `encryption_key` makes the module carry a secret, so every action now
+  fetches secrets at start. Playbook nodes (which always have a configuration) are
+  unaffected, but a config-less standalone action run errors — attach a configuration
+  when testing standalone.
 
 ## 2026-07-10 - 1.0.6
 
