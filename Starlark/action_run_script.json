@@ -1,7 +1,7 @@
 {
   "name": "Run Starlark Script",
   "description": "Execute a Starlark (Python-like) script to transform or filter data, replacing a graph of nodes with a single script. The script must define `def main(arguments):` and `return` a JSON-serialisable value (or `stop()` to halt the flow).",
-  "uuid": "c4ada6f6-0855-4e07-876e-f1a051cfa920",
+  "uuid": "8bc9332d-6b68-4256-878a-be53eb4dc9bd",
   "docker_parameters": "RunScriptAction",
   "arguments": {
     "title": "RunScriptArguments",

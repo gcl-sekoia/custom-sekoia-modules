@@ -1,7 +1,7 @@
 {
   "name": "Run Starlark Script (HTTP)",
   "description": "Execute a Starlark script that can call HTTP APIs via `http(method, url, headers={}, body=None, credential=NAME)`. Credentials are injected host-side from the module configuration and never exposed to the script; every request must name a credential whose policy allowlists the target host. Return data / stop() / output(name, data) as with the other Starlark actions.",
-  "uuid": "e2b6d9a1-4f8c-4d2e-9a3b-1c7f5e0a6d94",
+  "uuid": "208a74bd-3a43-4b16-bfc6-1d1214472488",
   "docker_parameters": "RunScriptHttpAction",
   "arguments": {
     "title": "RunScriptArguments",

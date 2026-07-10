@@ -19,9 +19,9 @@
     ]
   },
   "description": "Run a Starlark (Python-like) script inside a playbook to transform data and route branches, replacing a graph of nodes with a single script.",
-  "name": "Starlark Script",
-  "uuid": "b94ba300-bd6d-41d5-924a-57ebddaa054a",
-  "slug": "starlark-script",
+  "name": "Starlark Script (Purple Lab)",
+  "uuid": "698a7e10-f099-4fc5-9853-abca417da300",
+  "slug": "starlark-script-pl",
   "version": "1.1.2",
   "categories": [
     "Generic"
