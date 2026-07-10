@@ -1,3 +1,4 @@
+import time
 from typing import Any
 
 from pydantic.v1 import BaseModel, Field
@@ -40,6 +41,12 @@ class BaseRunScriptAction(Action):
     CENTER: str = "default"
     module: StarlarkModule
 
+    # sleep() budget: host-side pacing for poll loops. Bounded because the
+    # Starlark VM has no preemption -- a runaway loop is otherwise capped only
+    # by the platform action timeout. Per-call and cumulative-per-run caps.
+    SLEEP_MAX_CALL: float = 30.0
+    SLEEP_MAX_TOTAL: float = 240.0
+
     def run(self, params: RunScriptArguments) -> dict | None:
         try:
             script = StarlarkScript(params.script, primitives=self._primitives())
@@ -60,7 +67,29 @@ class BaseRunScriptAction(Action):
         def stop(reason: Any = None) -> dict:
             return {ROUTE_MARKER: {"branch": None, "reason": reason, "data": None}}
 
-        return {"log": log, "output": output, "stop": stop}
+        slept = [0.0]
+
+        def sleep(seconds: Any = 0) -> None:
+            """Pause host-side for `seconds` (float). For pacing poll loops over
+            async APIs. Bounded per call and per run; raises if the run's sleep
+            budget is exhausted (bound your loop)."""
+            try:
+                secs = float(seconds)
+            except (TypeError, ValueError):
+                raise ValueError("sleep(seconds): seconds must be a number")
+            if secs < 0:
+                raise ValueError("sleep(seconds): seconds must be >= 0")
+            secs = min(secs, self.SLEEP_MAX_CALL)
+            if slept[0] + secs > self.SLEEP_MAX_TOTAL:
+                raise RuntimeError(
+                    "sleep budget exhausted: %gs total per run -- bound your poll loop"
+                    % self.SLEEP_MAX_TOTAL
+                )
+            slept[0] += secs
+            time.sleep(secs)
+            return None
+
+        return {"log": log, "output": output, "stop": stop, "sleep": sleep}
 
     def _route(self, returned: Any) -> dict | None:
         if isinstance(returned, dict) and len(returned) == 1 and ROUTE_MARKER in returned:

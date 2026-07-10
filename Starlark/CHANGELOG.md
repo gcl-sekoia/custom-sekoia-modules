@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.3
+
+- Add `sleep(seconds)` primitive (bounded per-call/per-run) for pacing poll loops over async APIs.
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
