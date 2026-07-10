@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-07-10 - 1.1.2
+
+### Removed
+
+- The **Base64 Encode/Decode** action (it was a throwaway utility unrelated to the
+  Starlark script runtime).
+
 ## 2026-07-10 - 1.1.1
 
 ### Changed

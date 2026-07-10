@@ -14,7 +14,6 @@ Module UUID `b94ba300-bd6d-41d5-924a-57ebddaa054a`, slug `starlark-script`.
 | Run Starlark Script | `RunScriptAction` | `default` | Transform / filter data. |
 | Run Starlark Script (branches) | `RunScriptBranchesAction` | `left` / `main` / `right` | Transform + route to one of three branches. |
 | Run Starlark Script (HTTP) | `RunScriptHttpAction` | `default` | Transform + call HTTP APIs with injected credentials. |
-| Base64 Encode/Decode | `Base64Action` | `default` | Standalone base64 utility. |
 
 The three script actions share the same script API and arguments (`script` + an input
 `arguments` object); they differ only in their output branches and whether `http()` is
