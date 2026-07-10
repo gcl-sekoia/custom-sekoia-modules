@@ -20,11 +20,17 @@ class RunScriptArguments(BaseModel):
     )
 
 
+# The action's output branches, in left-to-right layout order for the playbook
+# editor (`default` centered). Must stay in sync with the `outputs` map in
+# action_run_script.json.
+OUTPUTS = ("left", "default", "right")
+
+
 class RunScriptAction(Action):
     name = "Run Starlark Script"
     description = (
-        "Execute a Starlark (Python-like) script to transform data, replacing a graph "
-        "of nodes with a single script."
+        "Execute a Starlark (Python-like) script to transform data and route the flow, "
+        "replacing a graph of nodes with a single script."
     )
     module: StarlarkModule
 
@@ -39,21 +45,34 @@ class RunScriptAction(Action):
         return self._as_results(result)
 
     def _primitives(self) -> dict[str, Any]:
-        """Host callables exposed to the script. `log` surfaces a message in the
-        action logs; `stop` withholds the single `default` output branch so the
-        playbook flow halts here (a filter), optionally logging a reason."""
+        """Host callables exposed to the script. `output` picks which of the three
+        branches fires (pick-one; a later call replaces an earlier one); `stop`
+        fires none, halting the flow; `log` records a message. If the script calls
+        neither `output` nor `stop`, the centered `default` branch fires."""
 
         def log(message: Any) -> None:
             self.log(str(message), level="info")
 
+        def output(name: Any) -> None:
+            branch = str(name)
+            if branch not in OUTPUTS:
+                raise ValueError(
+                    f"unknown output {branch!r}; valid outputs are: {', '.join(OUTPUTS)}"
+                )
+            # `default` fires implicitly only when no output is set, so a selection
+            # must replace any prior one rather than accumulate (else two branches
+            # fan out).
+            self._outputs.clear()
+            self.set_output(branch, True)
+
         def stop(reason: Any = None) -> None:
             if reason is not None:
                 self.log(f"flow stopped: {reason}", level="info")
-            # `default` fires implicitly only when no output is set; setting it
-            # False explicitly is what suppresses the downstream flow.
+            # Suppress `default` without activating a side branch: nothing fires.
+            self._outputs.clear()
             self.set_output("default", False)
 
-        return {"log": log, "stop": stop}
+        return {"log": log, "output": output, "stop": stop}
 
     @staticmethod
     def _as_results(value: Any) -> dict:

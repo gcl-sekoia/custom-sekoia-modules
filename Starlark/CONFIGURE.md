@@ -33,19 +33,25 @@ Beyond the Starlark core (functions, control flow, comprehensions, `str`,
 
 ## Output and flow control
 
-The action has a single output branch (`default`), which fires by default and
-carries the returned results to the next node. To act as a **filter** — halt the
-playbook here and run nothing downstream — call `stop()`; the `default` branch is
-then withheld. The script still runs to completion and its return value is
-recorded, but the flow does not continue.
+The action has three output branches, laid out left-to-right in the editor:
+`left`, `default` (centered), `right`. Behaviour:
+
+- Call **neither** `output` nor `stop` → the centered `default` fires and carries
+  the returned results to the next node.
+- `output("left")` / `output("right")` → that side fires instead of `default`
+  (pick one; a later `output(...)` replaces an earlier one).
+- `stop()` → no branch fires, halting the flow (a **filter**). The script still
+  runs to completion and its return value is recorded; the flow just stops here.
 
 ## Host helpers
 
-Two functions are injected by the action:
+Three functions are injected by the action:
 
 - `log(message)` — record a message in the action logs.
-- `stop(reason=None)` — halt the flow (withhold the `default` branch); the
-  optional `reason` is logged.
+- `output(name)` — fire one branch: `"left"`, `"default"` or `"right"` (an
+  unknown name is an error).
+- `stop(reason=None)` — halt the flow (fire no branch); the optional `reason`
+  is logged.
 
 ## Example
 
@@ -54,6 +60,8 @@ def main(arguments):
     high = [a for a in arguments["alerts"] if a["severity"] >= 8]
     if len(high) == 0:
         stop("no high-severity alerts")
+    elif len(high) > 10:
+        output("right")   # e.g. escalate
     log("kept %d of %d alerts" % (len(high), len(arguments["alerts"])))
     return {"high_severity": high, "count": len(high)}
 ```

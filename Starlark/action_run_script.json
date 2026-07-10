@@ -22,6 +22,11 @@
       "script"
     ]
   },
+  "outputs": {
+    "left": "Fires when the script calls output(\"left\").",
+    "default": "Fires by default (centered); carries the returned results to the next node.",
+    "right": "Fires when the script calls output(\"right\")."
+  },
   "results": {},
   "slug": "run_script"
 }

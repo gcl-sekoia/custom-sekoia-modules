@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-07-10 - 1.0.3
+
+### Added
+
+- Three output branches — `left`, `default` (centered), `right` — declared in the
+  manifest so they are wireable in the playbook editor. Script `output(name)`
+  helper fires one of them (validated; pick-one). Calling neither `output` nor
+  `stop` fires the centered `default`.
+
+### Changed
+
+- `stop()` now withholds every branch (nothing fires), rather than only the
+  single former `default`.
+
 ## 2026-07-10 - 1.0.2
 
 ### Changed
