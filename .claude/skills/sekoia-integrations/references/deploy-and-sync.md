@@ -46,6 +46,12 @@ POST /v1/symphony/modules/<module_uuid>/update
 The image tag derives from the manifest `version`, so **bump `version` before
 `update`** or you may rebuild the same tag and not see your change.
 
+Removing an action does not fully remove it: deleting its `action_*.json` +
+registration and updating drops it from the new image, but the platform keeps the
+existing **action record** (pinned to the previous image tag), and there is no API to
+delete an action (`DELETE /v1/symphony/actions/{uuid}` is 405). Delete the leftover
+action in the UI if you need it gone from the catalog.
+
 Re-running `from-git` on an already-created module conflicts at the unique-UUID
 check; use `check-for-updates` + `update` to change an existing module, `from-git`
 only for the first install.
