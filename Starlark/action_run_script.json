@@ -1,0 +1,27 @@
+{
+  "name": "Run Starlark Script",
+  "description": "Execute a Starlark (Python-like) script to transform data and route playbook branches, replacing a graph of nodes with a single script. The script must define `def main(arguments):` and return a JSON-serialisable value.",
+  "uuid": "c4ada6f6-0855-4e07-876e-f1a051cfa920",
+  "docker_parameters": "RunScriptAction",
+  "arguments": {
+    "title": "RunScriptArguments",
+    "type": "object",
+    "properties": {
+      "script": {
+        "title": "Script",
+        "description": "Starlark script defining `def main(arguments): ...` that returns the result. `arguments` is the input object below.",
+        "type": "string"
+      },
+      "arguments": {
+        "title": "Arguments",
+        "description": "Input object passed to the script as `arguments` (typically wired from previous playbook nodes).",
+        "type": "object"
+      }
+    },
+    "required": [
+      "script"
+    ]
+  },
+  "results": {},
+  "slug": "run_script"
+}

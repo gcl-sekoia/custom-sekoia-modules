@@ -1,0 +1,15 @@
+{
+  "configuration": {
+    "title": "Starlark Script configuration",
+    "type": "object",
+    "properties": {}
+  },
+  "description": "Run a Starlark (Python-like) script inside a playbook to transform data and route branches, replacing a graph of nodes with a single script.",
+  "name": "Starlark Script (GCL)",
+  "uuid": "b94ba300-bd6d-41d5-924a-57ebddaa054a",
+  "slug": "starlark-gcl",
+  "version": "1.0.0",
+  "categories": [
+    "Generic"
+  ]
+}

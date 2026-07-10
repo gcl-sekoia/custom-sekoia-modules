@@ -1,0 +1,61 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "Starlark Script"
+description = ""
+version = "0.0"
+authors = []
+package-mode = false
+
+[tool.black]
+line-length = 119
+target-version = ["py311"]
+include = "\\.pyi?$"
+
+[tool.isort]
+profile = "black"
+line_length = 119
+
+[tool.mypy]
+strict = false
+ignore_missing_imports = true
+allow_subclassing_any = true
+allow_untyped_calls = true
+pretty = true
+show_error_codes = true
+implicit_reexport = true
+allow_untyped_decorators = true
+warn_return_any = true
+exclude = ["tests/*"]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+starlark-pyo3 = "^2026.1"
+# Pinned: sekoia-automation-sdk 1.23 migrated Action argument validation from
+# pydantic.v1 to pydantic v2, which would break the pydantic.v1 argument models.
+pydantic = "2.10"
+
+[tool.poetry.dependencies.sekoia-automation-sdk]
+version = "1.22.3"
+extras = ["all"]
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+pytest-cov = "*"
+pytest-asyncio = "*"
+requests-mock = "*"
+mypy = "^1.11.2"
+
+[tool.poetry.dev-dependencies.black]
+version = "^26.1.0"
+allow-prereleases = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = ["tests"]
+addopts = "  --strict-markers\n  --tb=short\n  --cov=starlark_script\n  --cov-branch\n  --cache-clear\n  --cov-report=term-missing:skip-covered\n  --cov-fail-under=80\n"
+
+[tool.coverage.run]
+omit = ["tests/*", "main.py"]
