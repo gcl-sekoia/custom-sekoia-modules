@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-07-10 - 1.0.6
+
+### Added
+
+- New action **Base64 Encode/Decode**: base64-encode or -decode a string, chosen
+  via a `mode` argument (`encode`/`decode`). Standalone utility action, unrelated
+  to the Starlark script runtime.
+
 ## 2026-07-10 - 1.0.5
 
 ### Changed
