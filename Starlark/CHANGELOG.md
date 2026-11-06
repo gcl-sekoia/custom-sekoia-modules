@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2026-11-06 - 1.1.3
+
+### Security
+
+- The HTTP action no longer follows redirects. A 3xx from an allowlisted host could
+  send the request, with its injected credential header, to a host outside
+  `allowed_hosts`. The 3xx is now returned to the script as-is (status, `Location`,
+  body); the script can follow it with a new `http()` call, which is checked against
+  the allowlist again.
+
 ## 2026-07-10 - 1.1.2
 
 ### Removed

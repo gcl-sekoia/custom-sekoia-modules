@@ -63,14 +63,16 @@ def test_request_injects_secret_and_returns_response(key, monkeypatch):
     creds = parse_credentials(policy(key), key)
     captured = {}
 
-    def fake_request(method, url, headers=None, json=None, timeout=None):
+    def fake_request(method, url, headers=None, json=None, timeout=None, allow_redirects=True):
         captured["method"], captured["url"], captured["headers"] = method, url, headers
+        captured["allow_redirects"] = allow_redirects
         return FakeResponse(200, {"ok": True})
 
     monkeypatch.setattr(http_action.requests, "request", fake_request)
     result = do_request(creds, "get", "https://api.vendor.com/things", credential="vendor")
 
     assert captured["headers"]["Authorization"] == "Bearer s3cr3t"   # injected host-side
+    assert captured["allow_redirects"] is False
     assert result == {"status": 200, "headers": {"Content-Type": "application/json"}, "json": {"ok": True}, "body": ""}
 
 
@@ -99,7 +101,7 @@ def test_request_unknown_credential(key):
 
 
 def test_action_exposes_http_and_never_leaks_secret(key, monkeypatch):
-    def fake_request(method, url, headers=None, json=None, timeout=None):
+    def fake_request(method, url, headers=None, json=None, timeout=None, allow_redirects=True):
         return FakeResponse(200, {"echo": headers.get("Authorization")})
 
     monkeypatch.setattr(http_action.requests, "request", fake_request)
@@ -129,7 +131,7 @@ def test_allowlist_only_credential_makes_no_injection(monkeypatch):
     creds = parse_credentials(pol, None)
     captured = {}
 
-    def fake_request(method, url, headers=None, json=None, timeout=None):
+    def fake_request(method, url, headers=None, json=None, timeout=None, allow_redirects=True):
         captured["headers"] = headers
         return FakeResponse(200, {"ok": True})
 
@@ -148,3 +150,21 @@ def test_disallowed_host_surfaces_as_action_error(key):
     results = action.run({"script": script})
     assert results is None
     assert "not in allowed_hosts" in action.error_message
+
+
+def test_redirect_to_other_host_is_returned_not_followed(key, requests_mock):
+    # An allowlisted host answering 3xx must not carry the request (and the injected
+    # header) to a host outside allowed_hosts: the 3xx goes back to the script as-is.
+    creds = parse_credentials(policy(key, header="X-Api-Key", template="{value}"), key)
+    requests_mock.get(
+        "https://api.vendor.com/things", status_code=302, headers={"Location": "https://evil.example.com/x"}
+    )
+    target = requests_mock.get("https://evil.example.com/x", json={"leaked": True})
+
+    result = do_request(creds, "GET", "https://api.vendor.com/things", credential="vendor")
+
+    assert result["status"] == 302
+    assert result["headers"]["Location"] == "https://evil.example.com/x"
+    assert not target.called
+    assert requests_mock.call_count == 1
+    assert requests_mock.request_history[0].headers["X-Api-Key"] == "s3cr3t"
