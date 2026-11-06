@@ -67,7 +67,10 @@ script only *names* a credential — it never receives the secret value. The hos
 resolves the name, enforces the credential's egress allowlist, injects the secret into
 the request, and performs it. So a script can *use* a credential but cannot read, log,
 return, or exfiltrate it. Every request must name a credential, and its policy must
-allowlist the target host (https only).
+allowlist the target host (https only). Redirects are not followed, so a 3xx from an
+allowlisted host cannot carry the request and its credential to another host: the 3xx
+is returned to the script as-is, which can follow `Location` with a new `http()` call
+(checked against the allowlist again).
 
 ### Configuring credentials
 
@@ -115,7 +118,7 @@ in the module configuration's write-only `encryption_key` field.
 
 ```bash
 uv venv .venv --python 3.11
-uv pip install --python .venv/bin/python "sekoia-automation-sdk==1.22.3" "pydantic==2.10" cryptography starlark-pyo3 pytest pytest-cov
+uv pip install --python .venv/bin/python "sekoia-automation-sdk==1.22.3" "pydantic==2.10" cryptography starlark-pyo3 pytest pytest-cov requests-mock
 .venv/bin/python -m pytest -q
 ```
 

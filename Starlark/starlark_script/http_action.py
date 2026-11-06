@@ -111,9 +111,14 @@ def do_request(creds: dict[str, dict], method: Any, url: Any, headers: Any = Non
         req_headers = _inject(req_headers, cred)
 
     try:
+        # allow_redirects=False: the allowlist is checked on this URL only, so a 3xx
+        # must not carry the request (and the injected header) to another host. The
+        # 3xx is returned as-is; the script can follow `Location` with a new http()
+        # call, which goes through the allowlist check again.
         resp = requests.request(
             str(method).upper(), str(url), headers=req_headers,
             json=body if body is not None else None, timeout=HTTP_TIMEOUT,
+            allow_redirects=False,
         )
     except requests.RequestException as error:
         # Sanitized: type only, never the message (which could echo a URL/creds).
